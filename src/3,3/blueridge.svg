@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1024 768">
+    <defs>
+        <style>.a{isolation:isolate;}.b{font-size:92.61px;fill:#221f20;font-family:'Roboto Mono',monospaced;}.c{letter-spacing:-0.06em;}.d{letter-spacing:-0.06em;}.e{font-size:81px;}.f{fill:#fff;}.g{fill:none;stroke:#221f20;stroke-miterlimit:10;stroke-width:4px;}</style>
+    </defs>
+    <image class="a" width="1024" height="768"
+           xlink:href="https://gateway.pinata.cloud/ipfs/QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"/>
+    <text class="b" transform="translate(174 213.85) scale(0.97 1)">
+        <tspan id="sklima">--.---</tspan>
+        <tspan class="d" x="377.26" y="0">s</tspan>
+        <tspan class="e" x="427.27" y="0">KLIMA</tspan>
+    </text>
+    <rect id="progress" class="f" x="181.19" y="254.7" width="0" height="24.56"/>
+    <rect class="g" x="181.94" y="254.87" width="640" height="24.56"/>
+</svg>

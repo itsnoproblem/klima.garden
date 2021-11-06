@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+
+.App-eightbit {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 21px;
+  line-height: 48px;
+}
+
+.App-mintbutton {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 21px;
+  line-height: 48px;
+}
+
