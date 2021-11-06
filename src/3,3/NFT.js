@@ -1,9 +1,11 @@
 import blueridge from './blueridge.svg';
+import KlimaGardenNFT from '../utils/KlimaGardenNFT.json';
 import {useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
 import {Box, HStack, Link, useToast} from "@chakra-ui/react";
-import {ethers} from "ethers";
+import {ethers, Contract, BigNumber, ContractFunction} from "ethers";
 import {ExternalLinkIcon, LinkIcon} from "@chakra-ui/icons";
+
 import * as Constants from '../constants';
 
 
@@ -28,10 +30,12 @@ export const NFT = () => {
     const [epochNumber, setEpochNumber] = useState(0);
     const [secUntilRebase, setSecUntilRebase] = useState(0);
     const [percentageComplete, setPercentComplete] = useState(0);
-    const [nftOwnerAddress, ] = useState(nftOwnerAddresses[Math.floor(Math.random() * nftOwnerAddresses.length)]);
+    const [nftOwnerAddress, setNftOwnerAddress] = useState(false); //useState(nftOwnerAddresses[Math.floor(Math.random() * nftOwnerAddresses.length)]);
 
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
+
+    let alchemyProvider;
 
     useInterval(() => {
         epochUpdate();
@@ -86,7 +90,10 @@ export const NFT = () => {
     }
 
     const ethersProvider = () => {
-        return new ethers.providers.AlchemyProvider(process.env.REACT_APP_ALCHEMY_PROVIDER_NETWORK, process.env.REACT_APP_ALCHEMY_PROVIDER_API_KEY);
+        if(alchemyProvider === undefined) {
+            alchemyProvider = new ethers.providers.AlchemyProvider(process.env.REACT_APP_ALCHEMY_PROVIDER_NETWORK, process.env.REACT_APP_ALCHEMY_PROVIDER_API_KEY);
+        }
+        return  alchemyProvider;
     }
 
     const getSklimaContract = () => {
@@ -99,8 +106,37 @@ export const NFT = () => {
         return new ethers.Contract(Constants.KLIMA_STAKING_CONTRACT_ADDRESS, Constants.KLIMA_STAKING_ABI, provider);
     }
 
+    const getKlimaGardenContract =() => {
+        const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_MUMBAI_PROVIDER_URL);
+        return new ethers.Contract(Constants.KLIMAGARDEN_CONTRACT_ADDRESS, KlimaGardenNFT.abi, provider);
+    }
+
     const getSvg = () => {
-        return document.getElementById('nft').contentDocument;
+        return document.getElementById('nft')?.contentDocument;
+    }
+
+    const fetchNFTData = async () => {
+        try {
+
+            const url = new URL(window.location);
+            const tokenFromPath = url.pathname.substring(url.pathname.lastIndexOf('/')+1)
+            const tokenId = tokenFromPath;
+            let owner;
+            console.log("Fetching NFT data for tokenId " + tokenId)
+
+            const contract = getKlimaGardenContract();
+            owner = await contract.ownerOf(tokenId);
+            setNftOwnerAddress(owner);
+            console.log("Got owner: " + owner);
+            updateSklimaBalance(owner);
+
+        }
+        catch(err) {
+            console.log(err);
+            setNftOwnerAddress("failed");
+            console.log(err.args)
+            toastError(err);
+        }
     }
 
     const epochUpdate = async () => {
@@ -119,8 +155,18 @@ export const NFT = () => {
         setSecUntilRebase(seconds);
         setPercentComplete(pcomplete);
 
+        console.log("owner in epoch update", nftOwnerAddress);
+        if(nftOwnerAddress && nftOwnerAddresses !== "failed") {
+            updateSklimaBalance(nftOwnerAddress);
+        }
+
+        setIsUpdating(false);
+    }
+
+    const updateSklimaBalance = (owner) => {
         const sklimaContract = getSklimaContract();
-        sklimaContract.balanceOf(nftOwnerAddress).then(async (res) => {
+        sklimaContract.balanceOf(owner).then(async (res) => {
+            console.log("got balance", res);
             const formattedBalance = res.toNumber() / 1000000000;
             const sKlimaBalance = formattedBalance.toPrecision(5).toString();
             setSklimaBalance(sKlimaBalance);
@@ -128,8 +174,6 @@ export const NFT = () => {
         }).catch((err) => {
             toastError(err);
         });
-
-        setIsUpdating(false);
     }
 
     const convertHMS = (value) => {
@@ -143,6 +187,10 @@ export const NFT = () => {
     }
 
     useEffect(() => {
+
+        window.addEventListener('load', () => {
+            fetchNFTData();
+        });
 
         const svgObject = getSvg();
         if(svgObject) {
@@ -160,7 +208,7 @@ export const NFT = () => {
             }
         }
 
-    }, [sklimaBalance, percentageComplete]);
+    }, [sklimaBalance, percentageComplete, nftOwnerAddresses, fetchNFTData, nftOwnerAddress]);
 
     return (
         <Box borderColor="gray.50" borderWidth="14px">
