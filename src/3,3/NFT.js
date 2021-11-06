@@ -10,19 +10,25 @@ import * as Constants from '../constants';
 export const NFT = () => {
 
     // **** Test Accounts ****
-    const nftOwnerAddress = "0x9B394B315Ada446A1fAe283b7C84Cc139B30bd16";
+    const nftOwnerAddresses = [
+        "0x9B394B315Ada446A1fAe283b7C84Cc139B30bd16",
+        "0x1560684bad4d785c9864361cb3a43916c7abd89d",
+        "0xcb927731f27898b30ad85964f9c5b784772cb924",
+        "0x993b0af94d3e816aaa5e32381ed0ab30ad216bc9",
+        "0x9868175e9e83bb4fd8bd879480b1075371399098"
+    ];
 
     // **** Data from NFT ****
     const imgName = 'Blue Ridge Lo-Fi';
     const imgHash = 'QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG';
     const imgUrl = process.env.REACT_APP_IPFS_GATEWAY_URL + '/ipfs/' + imgHash;
 
-
     const [sklimaBalance, setSklimaBalance] = useState('--.---');
     const [rebaseBlock, setRebaseBlock] = useState(0);
     const [epochNumber, setEpochNumber] = useState(0);
     const [secUntilRebase, setSecUntilRebase] = useState(0);
     const [percentageComplete, setPercentComplete] = useState(0);
+    const [nftOwnerAddress, ] = useState(nftOwnerAddresses[Math.floor(Math.random() * nftOwnerAddresses.length)]);
 
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();

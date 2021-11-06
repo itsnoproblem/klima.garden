@@ -3,14 +3,6 @@ import {
     Box,
     Button,
     Image,
-    Link,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
     Popover,
     PopoverArrow,
     PopoverBody,
@@ -25,7 +17,6 @@ import {
     Th,
     Thead,
     Tr,
-    useDisclosure,
     useToast,
     VStack
 } from "@chakra-ui/react";
@@ -43,7 +34,6 @@ export const Welcome = () => {
     const [mintStatus, setMintStatus] = useState("");
     const [sklimaBalance, setSklimaBalance] = useState(0);
     const toast = useToast();
-    // const { balanceWarningIsOpen, balanceWarningOnOpen, balanceWarningOnClose } = useDisclosure();
 
     const ethersProvider = () => {
         return new ethers.providers.AlchemyProvider(process.env.REACT_APP_ALCHEMY_PROVIDER_NETWORK, process.env.REACT_APP_ALCHEMY_PROVIDER_API_KEY);
@@ -133,24 +123,6 @@ export const Welcome = () => {
     return(
         <>
             <SwitchNetworkDialog/>
-            {/*<Modal className="sklimaBalanceWarning" isOpen={balanceWarningIsOpen} onOpen={balanceWarningOnOpen} onClose={balanceWarningOnClose}>*/}
-            {/*    <ModalOverlay />*/}
-            {/*    <ModalContent>*/}
-            {/*        <ModalHeader>Hold up</ModalHeader>*/}
-            {/*        <ModalCloseButton />*/}
-            {/*        <ModalBody>*/}
-            {/*            <Box>You need to hold staked KLIMA tokens (sKlima) in order to mint a Klima Garden NFT plot.*/}
-            {/*                Visit <Link href={"https://www.klimadao.finance/"}>klimadao.finance</Link> to get started.*/}
-            {/*            </Box>*/}
-            {/*        </ModalBody>*/}
-
-            {/*        <ModalFooter>*/}
-            {/*            <Button colorScheme="blue" mr={3} onClick={balanceWarningOnClose}>*/}
-            {/*                Close*/}
-            {/*            </Button>*/}
-            {/*        </ModalFooter>*/}
-            {/*    </ModalContent>*/}
-            {/*</Modal>*/}
             <Box minH={"100vh"} minW={"100vw"} bg={"blue.200"} textAlign={"center"}>
                 <Image src={"/klima-garden.gif"} margin={"auto"} mt={"20"}/>
                 <Box textShadow={"1px 1px #381200"}
