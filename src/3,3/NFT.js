@@ -30,7 +30,7 @@ export const NFT = () => {
     const [epochNumber, setEpochNumber] = useState(0);
     const [secUntilRebase, setSecUntilRebase] = useState(0);
     const [percentageComplete, setPercentComplete] = useState(0);
-    const [nftOwnerAddress, setNftOwnerAddress] = useState(false); //useState(nftOwnerAddresses[Math.floor(Math.random() * nftOwnerAddresses.length)]);
+    const [nftOwnerAddress, setNftOwnerAddress] = useState(false); 
 
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
