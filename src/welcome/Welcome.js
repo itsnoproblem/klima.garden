@@ -124,10 +124,10 @@ export const Welcome = () => {
         <>
             <SwitchNetworkDialog/>
             <Box minH={"100vh"} minW={"100vw"} bg={"blue.200"} textAlign={"center"}>
-                <Image src={"/klima-garden.gif"} margin={"auto"} mt={"20"}/>
+                <Image src={"/klima-garden.gif"} margin={"auto"} mt={["10", "20"]}/>
                 <Box textShadow={"1px 1px #381200"}
                       color={"#83c305"}
-                      fontSize={"3xl"}
+                      fontSize={["xl", "3xl"]}
                       lineHeight={"1.9"}
                       mt={3}
                       className='App-eightbit'
@@ -152,7 +152,7 @@ export const Welcome = () => {
                                          color={"cyan.100"}
                                          borderColor={"cyan.100"}
                                          borderWidth={4}
-                                         backgroundColor={"purple.400"}
+                                         backgroundColor={"purple.600"}
                                          _hover={{backgroundColor: "purple.500"}}
                                          onClick={askContractToMintNft}
                                          borderRadius={"xl"}
@@ -162,12 +162,20 @@ export const Welcome = () => {
                             </>
                         )}
 
-                        <Box fontFamily={"Roboto Mono"}>
-                            sKLIMA holders may mint for 0.033 ETH.<br/>
+                        <Box
+                            fontFamily={"Roboto Mono"}
+                            color={"purple.600"}
+                            fontSize={["md", "lg"]}
+                            textShadow={"2px 1px #ccc"}
+                            fontWeight={"bold"}
+                            lineHeight={"1.5em"}
+                            mb={4}
+                        >
+                            sKLIMA holders can mint for 0.033 ETH.<br/>
                             Plot assignments are random.
                         </Box>
-                        <Box>
-                            <Popover>
+                        <Box mb={"20"}>
+                            <Popover colorScheme={"blue"}>
                                 <PopoverTrigger>
                                     <Badge
                                         backgroundColor={"blue.500"}
@@ -177,7 +185,7 @@ export const Welcome = () => {
                                         _hover={{backgroundColor: "blue.600"}}
                                     >Details</Badge>
                                 </PopoverTrigger>
-                                <PopoverContent>
+                                <PopoverContent backgroundColor={"gray.50"}>
                                     <PopoverArrow />
                                     <PopoverCloseButton color={"gray.600"}/>
                                     <PopoverBody>
