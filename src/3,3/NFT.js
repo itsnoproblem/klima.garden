@@ -2,10 +2,9 @@ import blueridge from './blueridge.svg';
 import KlimaGardenNFT from '../utils/KlimaGardenNFT.json';
 import {useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
-import {Box, HStack, Link, useToast} from "@chakra-ui/react";
-import {ethers, Contract, BigNumber, ContractFunction} from "ethers";
-import {ExternalLinkIcon, LinkIcon} from "@chakra-ui/icons";
-import { chakra , useMediaQuery } from "@chakra-ui/react"
+import {Box, HStack, IconButton, Link, useMediaQuery, useToast, SimpleGrid} from "@chakra-ui/react";
+import {ethers} from "ethers";
+import {ExternalLinkIcon, Icon, LinkIcon, ChevronLeftIcon} from "@chakra-ui/icons";
 
 import * as Constants from '../constants';
 
@@ -22,6 +21,7 @@ export const NFT = () => {
     const [secUntilRebase, setSecUntilRebase] = useState(0);
     const [percentageComplete, setPercentComplete] = useState(0);
     const [nftOwnerAddress, setNftOwnerAddress] = useState("");
+    const [tokenId, setTokenId] = useState();
 
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
@@ -111,6 +111,7 @@ export const NFT = () => {
             const url = new URL(window.location);
             const tokenFromPath = url.pathname.substring(url.pathname.lastIndexOf('/')+1)
             const tokenId = tokenFromPath;
+            setTokenId(tokenFromPath);
             let owner;
 
             const contract = getKlimaGardenContract();
@@ -200,43 +201,60 @@ export const NFT = () => {
     const imgWidth = isLargerThan800 ? "1024px" : "100%";
 
     return (
-        <Box borderColor="gray.50" borderWidth="14px">
-            <object
-                id="nft"
-                type="image/svg+xml"
-                data={blueridge}
-                width={imgWidth}
-                style={{"object-fit": "contain"}}
-                aria-label={imgName}
-                onLoad={epochUpdate}
-            />
-            <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="14px" color={"green.700"}>
-                <Box w="30%" textAlign="left">
-                    epoch {epochNumber}
-                </Box>
-                <Box w="70%" textAlign="right">
-                    <code>
-                        rebase in {convertHMS(secUntilRebase)}
-                    </code>
-                </Box>
-            </HStack>
-            <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="7px">
-                <Box w="50%" textAlign="left">
-                    <code>
-                        <Link color="green.700" href={process.env.POLYGONSCAN_URL + "/address/" + nftOwnerAddress}  target="_blank">
-                            {nftOwnerAddress.substring(0, 5)+"..."+nftOwnerAddress.substring(-4, 4)}
-                            <ExternalLinkIcon marginLeft={2}/>
+        <>
+            <Box mb={3} ml={6} color="gray.600" textAlign="left" width={"100%"}>
+                <SimpleGrid columns={2} position={"absolute"} top={3} width={"98%"}>
+                    <Box>
+                        <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>
+                    </Box>
+                    <HStack pr={6} textAlign={"right"}>
+                        <Link w="100%" textAlign="right" href={`${Constants.OPENSEA_URL}/${Constants.KLIMAGARDEN_CONTRACT_ADDRESS}/${tokenId}`}
+                              fontSize="lg"
+                              target={"_blank"}
+                        >
+                            OpenSea <ExternalLinkIcon ml={1}/>
                         </Link>
-                    </code>
-                </Box>
-                <Box w="50%" textAlign="right">
-                    <Link color="green.700" href={imgUrl} target="_blank" cursor="pointer" alignSelf={"end"}>
-                            {imgName}
-                            <LinkIcon marginLeft={2}/>
-                    </Link>
-                </Box>
-            </HStack>
-        </Box>
+                    </HStack>
+                </SimpleGrid>
+            </Box>
+            <Box borderColor="gray.50" borderWidth="14px">
+                <object
+                    id="nft"
+                    type="image/svg+xml"
+                    data={blueridge}
+                    width={imgWidth}
+                    style={{"object-fit": "contain"}}
+                    aria-label={imgName}
+                    onLoad={epochUpdate}
+                />
+                <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="14px" color={"green.700"}>
+                    <Box w="30%" textAlign="left">
+                        epoch {epochNumber}
+                    </Box>
+                    <Box w="70%" textAlign="right">
+                        <code>
+                            rebase in {convertHMS(secUntilRebase)}
+                        </code>
+                    </Box>
+                </HStack>
+                <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="7px">
+                    <Box w="50%" textAlign="left">
+                        <code>
+                            <Link color="green.700" href={process.env.POLYGONSCAN_URL + "/address/" + nftOwnerAddress}  target="_blank">
+                                {nftOwnerAddress.substring(0, 5)+"..."+nftOwnerAddress.substring(-4, 4)}
+                                <ExternalLinkIcon marginLeft={2}/>
+                            </Link>
+                        </code>
+                    </Box>
+                    <Box w="50%" textAlign="right">
+                        <Link color="green.700" href={imgUrl} target="_blank" cursor="pointer" alignSelf={"end"}>
+                                {imgName}
+                                <LinkIcon marginLeft={2}/>
+                        </Link>
+                    </Box>
+                </HStack>
+            </Box>
+        </>
     );
 }
 
