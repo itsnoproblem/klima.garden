@@ -5,21 +5,12 @@ import {useInterval} from "usehooks-ts";
 import {Box, HStack, Link, useToast} from "@chakra-ui/react";
 import {ethers, Contract, BigNumber, ContractFunction} from "ethers";
 import {ExternalLinkIcon, LinkIcon} from "@chakra-ui/icons";
+import { chakra , useMediaQuery } from "@chakra-ui/react"
 
 import * as Constants from '../constants';
 
 
 export const NFT = () => {
-
-    // **** Test Accounts ****
-    const nftOwnerAddresses = [
-        "0x9B394B315Ada446A1fAe283b7C84Cc139B30bd16",
-        "0x1560684bad4d785c9864361cb3a43916c7abd89d",
-        "0xcb927731f27898b30ad85964f9c5b784772cb924",
-        "0x993b0af94d3e816aaa5e32381ed0ab30ad216bc9",
-        "0x9868175e9e83bb4fd8bd879480b1075371399098"
-    ];
-
     // **** Data from NFT ****
     const imgName = 'Blue Ridge Lo-Fi';
     const imgHash = 'QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG';
@@ -30,7 +21,7 @@ export const NFT = () => {
     const [epochNumber, setEpochNumber] = useState(0);
     const [secUntilRebase, setSecUntilRebase] = useState(0);
     const [percentageComplete, setPercentComplete] = useState(0);
-    const [nftOwnerAddress, setNftOwnerAddress] = useState(false); 
+    const [nftOwnerAddress, setNftOwnerAddress] = useState("");
 
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
@@ -117,19 +108,15 @@ export const NFT = () => {
 
     const fetchNFTData = async () => {
         try {
-
             const url = new URL(window.location);
             const tokenFromPath = url.pathname.substring(url.pathname.lastIndexOf('/')+1)
             const tokenId = tokenFromPath;
             let owner;
-            console.log("Fetching NFT data for tokenId " + tokenId)
 
             const contract = getKlimaGardenContract();
             owner = await contract.ownerOf(tokenId);
             setNftOwnerAddress(owner);
-            console.log("Got owner: " + owner);
             updateSklimaBalance(owner);
-
         }
         catch(err) {
             console.log(err);
@@ -155,8 +142,7 @@ export const NFT = () => {
         setSecUntilRebase(seconds);
         setPercentComplete(pcomplete);
 
-        console.log("owner in epoch update", nftOwnerAddress);
-        if(nftOwnerAddress && nftOwnerAddresses !== "failed") {
+        if(nftOwnerAddress && nftOwnerAddress !== "failed") {
             updateSklimaBalance(nftOwnerAddress);
         }
 
@@ -181,9 +167,9 @@ export const NFT = () => {
         let hours   = Math.floor(sec / 3600); // get hours
         let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
         let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
-        hours = (hours > 0) ? (hours < 2) ? `${hours} hour ` : `${hours} hours ` : '';
-        minutes = (minutes > 0) ? `${minutes} min ` : '';
-        return hours + minutes + seconds + ' sec';
+        hours = (hours > 0) ? (hours < 2) ? `${hours}h ` : `${hours}h ` : '';
+        minutes = (minutes > 0) ? `${minutes}m ` : '';
+        return hours + minutes + seconds + 's';
     }
 
     useEffect(() => {
@@ -208,16 +194,27 @@ export const NFT = () => {
             }
         }
 
-    }, [sklimaBalance, percentageComplete, nftOwnerAddresses, fetchNFTData, nftOwnerAddress]);
+    }, [sklimaBalance, percentageComplete, fetchNFTData, nftOwnerAddress]);
+
+    const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
+    const imgWidth = isLargerThan800 ? "1024px" : "100%";
 
     return (
         <Box borderColor="gray.50" borderWidth="14px">
-            <object onLoad={epochUpdate} id="nft" data={blueridge} width={["1024px", "768px"]} aria-label={imgName} type="image/svg+xml"/>
+            <object
+                id="nft"
+                type="image/svg+xml"
+                data={blueridge}
+                width={imgWidth}
+                style={{"object-fit": "contain"}}
+                aria-label={imgName}
+                onLoad={epochUpdate}
+            />
             <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="14px" color={"green.700"}>
-                <Box w="50%" textAlign="left">
+                <Box w="30%" textAlign="left">
                     epoch {epochNumber}
                 </Box>
-                <Box w="50%" textAlign="right">
+                <Box w="70%" textAlign="right">
                     <code>
                         rebase in {convertHMS(secUntilRebase)}
                     </code>
@@ -227,7 +224,7 @@ export const NFT = () => {
                 <Box w="50%" textAlign="left">
                     <code>
                         <Link color="green.700" href={process.env.POLYGONSCAN_URL + "/address/" + nftOwnerAddress}  target="_blank">
-                            {nftOwnerAddress}
+                            {nftOwnerAddress.substring(0, 5)+"..."+nftOwnerAddress.substring(-4, 4)}
                             <ExternalLinkIcon marginLeft={2}/>
                         </Link>
                     </code>
