@@ -164,7 +164,7 @@ export const Welcome = () => {
 
                         <Box
                             fontFamily={"Roboto Mono"}
-                            color={"purple.600"}
+                            color={"blue.500"}
                             fontSize={["md", "lg"]}
                             textShadow={"2px 1px #ccc"}
                             fontWeight={"bold"}
