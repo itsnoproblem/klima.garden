@@ -21,7 +21,7 @@ import {
     VStack
 } from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
-import {ethers} from "ethers";
+import {ethers, BigNumber} from "ethers";
 import KlimaGardenNFT from '../utils/KlimaGardenNFT.json';
 import ConnectButton from "./ConnectButton";
 import SwitchNetworkDialog from "./SwitchNetworkDialog";
@@ -33,6 +33,7 @@ export const Welcome = () => {
     const [isMinting, setIsMinting] = useState(false);
     const [mintStatus, setMintStatus] = useState("");
     const [sklimaBalance, setSklimaBalance] = useState(0);
+    const [sklimaBalanceRaw, setSklimaBalanceRaw] = useState(BigNumber.from(0));
     const toast = useToast();
 
     const ethersProvider = () => {
@@ -73,6 +74,7 @@ export const Welcome = () => {
                 setIsMinting(true);
                 setMintStatus("awaiting user confirmation...")
                 console.log("About to mint with BALANCE", sklimaBalance);
+                console.log("bnBalance", sklimaBalanceRaw);
 
                 const provider = new ethers.providers.Web3Provider(ethereum);
                 const signer = provider.getSigner();
@@ -81,7 +83,7 @@ export const Welcome = () => {
                 try {
                     console.log("Going to pop wallet now to pay gas...")
                     setMintStatus("please wait...");
-                    let nftTxn = await connectedContract.makeNFT(sklimaBalance);
+                    let nftTxn = await connectedContract.makeNFT(sklimaBalanceRaw);
                     console.log("Mining...please wait.")
                     setMintStatus("confirming...");
                     await nftTxn.wait();
@@ -107,17 +109,18 @@ export const Welcome = () => {
     }
 
     useEffect (() => {
-        console.log("CURRENT ACCOUNT", currentAccount);
-        if(currentAccount !== "") {
-            const sklimaContract = getSklimaContract();
-            sklimaContract.balanceOf(currentAccount).then(async (res) => {
-                const formattedBalance = res.toNumber() / 1000000000;
-                console.log("sklima balance", formattedBalance);
-                setSklimaBalance(formattedBalance);
-            }).catch((err) => {
-                toastError(err);
-            });
-        }
+        // console.log("CURRENT ACCOUNT", currentAccount);
+        // if(currentAccount !== "") {
+        //     const sklimaContract = getSklimaContract();
+        //     sklimaContract.balanceOf(currentAccount).then(async (res) => {
+        //         const formattedBalance = res.toNumber() / 1000000000;
+        //         console.log("sklima balance", formattedBalance);
+        //         setSklimaBalance(formattedBalance);
+        //         setSklimaBalanceRaw(res);
+        //     }).catch((err) => {
+        //         toastError(err);
+        //     });
+        // }
     })
 
     return(

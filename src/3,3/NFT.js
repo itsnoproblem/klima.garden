@@ -2,7 +2,7 @@ import blueridge from './blueridge.svg';
 import KlimaGardenNFT from '../utils/KlimaGardenNFT.json';
 import {useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
-import {Box, HStack, IconButton, Link, useMediaQuery, useToast, SimpleGrid} from "@chakra-ui/react";
+import {Box, HStack, IconButton, Link, useMediaQuery, useToast, Progress, SimpleGrid} from "@chakra-ui/react";
 import {ethers} from "ethers";
 import {ExternalLinkIcon, Icon, LinkIcon, ChevronLeftIcon} from "@chakra-ui/icons";
 
@@ -21,6 +21,7 @@ export const NFT = () => {
     const [secUntilRebase, setSecUntilRebase] = useState(0);
     const [percentageComplete, setPercentComplete] = useState(0);
     const [nftOwnerAddress, setNftOwnerAddress] = useState("");
+    const [nftMetadata, setNftMetadata] = useState();
     const [tokenId, setTokenId] = useState();
 
     const [isUpdating, setIsUpdating] = useState(false);
@@ -106,6 +107,7 @@ export const NFT = () => {
         return document.getElementById('nft')?.contentDocument;
     }
 
+
     const fetchNFTData = async () => {
         try {
             const url = new URL(window.location);
@@ -115,9 +117,18 @@ export const NFT = () => {
             let owner;
 
             const contract = getKlimaGardenContract();
-            owner = await contract.ownerOf(tokenId);
-            setNftOwnerAddress(owner);
-            updateSklimaBalance(owner);
+            contract.ownerOf(tokenId).then((owner) => {
+                setNftOwnerAddress(owner);
+                updateSklimaBalance(owner);
+            });
+
+            contract.tokenURI(tokenId).then((uri) => {
+                const metadata = JSON.parse(atob(uri.replace("data:application/json;base64,", "")));
+                setNftMetadata(metadata);
+                console.log("tokenURI", metadata);
+            });
+
+
         }
         catch(err) {
             console.log(err);
@@ -133,6 +144,17 @@ export const NFT = () => {
 
         const EPOCH_SECONDS = 8 * 60 * 60;
         const rebaseInfo = await getKlimaStakingContract().epoch();
+        console.log("ebaseInfo",
+            rebaseInfo[0].toNumber(),
+            rebaseInfo[1].toNumber(),
+            rebaseInfo[2].toNumber(),
+            rebaseInfo[3].toNumber(),
+            rebaseInfo.distribute.toNumber(),
+            rebaseInfo.endBlock.toNumber(),
+            rebaseInfo.number.toNumber()
+        );
+        console.log(rebaseInfo);
+
         const epochNum = rebaseInfo[1].toNumber();
         const rebaseBlk = rebaseInfo[2].toNumber();
         const seconds = await secondsUntilBlock(rebaseBlk);
@@ -142,6 +164,7 @@ export const NFT = () => {
         setRebaseBlock(rebaseBlock);
         setSecUntilRebase(seconds);
         setPercentComplete(pcomplete);
+        console.log("percentage complete", pcomplete);
 
         if(nftOwnerAddress && nftOwnerAddress !== "failed") {
             updateSklimaBalance(nftOwnerAddress);
@@ -200,6 +223,19 @@ export const NFT = () => {
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
     const imgWidth = isLargerThan800 ? "1024px" : "100%";
 
+    const getNftAttribute = (name) => {
+        let attr;
+        if(nftMetadata?.attributes) {
+            // console.log("attributes", nftMetadata?.attributes);
+            let t; for(t of nftMetadata?.attributes) {
+                if(t.trait_type === name) {
+                    return t.value;
+                }
+            };
+        }
+        return attr;
+    }
+
     return (
         <>
             <Box mb={3} ml={6} color="gray.600" textAlign="left" width={"100%"}>
@@ -208,7 +244,9 @@ export const NFT = () => {
                         <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>
                     </Box>
                     <HStack pr={6} textAlign={"right"}>
-                        <Link w="100%" textAlign="right" href={`${Constants.OPENSEA_URL}/${Constants.KLIMAGARDEN_CONTRACT_ADDRESS}/${tokenId}`}
+                        <Link w="100%"
+                              textAlign="right"
+                              href={`${Constants.OPENSEA_URL}/${Constants.KLIMAGARDEN_CONTRACT_ADDRESS}/${tokenId}`}
                               fontSize="lg"
                               target={"_blank"}
                         >
@@ -223,11 +261,22 @@ export const NFT = () => {
                     type="image/svg+xml"
                     data={blueridge}
                     width={imgWidth}
-                    style={{"object-fit": "contain"}}
-                    aria-label={imgName}
+                    style={{"objectFit": "contain"}}
+                    aria-label={nftMetadata?.name}
                     onLoad={epochUpdate}
                 />
                 <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="14px" color={"green.700"}>
+                    <Box w="30%" textAlign="left">
+                        Minted with {getNftAttribute('Minted with sKLIMA')} sKLIMA
+                    </Box>
+                    <Box w="70%">
+                        <SimpleGrid columns={2}>
+                            <Box align={"right"}>Balance: {sklimaBalance} sKLIMA</Box>
+                            <Box alignItems={"bottom"}><Progress mt={1} ml={4} isIndeterminate={false} size="md" min={0} max={100} value={percentageComplete} backgroundColor={"gray.200"}/></Box>
+                        </SimpleGrid>
+                    </Box>
+                </HStack>
+                <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="7px" color={"green.700"}>
                     <Box w="30%" textAlign="left">
                         epoch {epochNumber}
                     </Box>
@@ -237,6 +286,7 @@ export const NFT = () => {
                         </code>
                     </Box>
                 </HStack>
+
                 <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="7px">
                     <Box w="50%" textAlign="left">
                         <code>
@@ -248,7 +298,7 @@ export const NFT = () => {
                     </Box>
                     <Box w="50%" textAlign="right">
                         <Link color="green.700" href={imgUrl} target="_blank" cursor="pointer" alignSelf={"end"}>
-                                {imgName}
+                                {nftMetadata?.name} ({getNftAttribute("rarity")})
                                 <LinkIcon marginLeft={2}/>
                         </Link>
                     </Box>
