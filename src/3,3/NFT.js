@@ -4,7 +4,9 @@ import {useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
 import {Box, HStack, IconButton, Link, useMediaQuery, useToast, Progress, SimpleGrid} from "@chakra-ui/react";
 import {ethers} from "ethers";
-import {ExternalLinkIcon, Icon, LinkIcon, ChevronLeftIcon} from "@chakra-ui/icons";
+import {ExternalLinkIcon, Icon, LinkIcon, ChevronLeftIcon, ViewIcon} from "@chakra-ui/icons";
+import {FaFileImage} from "react-icons/fa";
+import {GiSailboat} from "react-icons/gi";
 
 import * as Constants from '../constants';
 
@@ -244,14 +246,14 @@ export const NFT = () => {
                         <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>
                     </Box>
                     <HStack pr={6} textAlign={"right"}>
-                        <Link w="100%"
-                              textAlign="right"
-                              href={`${Constants.OPENSEA_URL}/${Constants.KLIMAGARDEN_CONTRACT_ADDRESS}/${tokenId}`}
-                              fontSize="lg"
-                              target={"_blank"}
-                        >
-                            OpenSea <ExternalLinkIcon ml={1}/>
-                        </Link>
+                        {/*<Link w="100%"*/}
+                        {/*      textAlign="right"*/}
+                        {/*      href={`${Constants.OPENSEA_URL}/${Constants.KLIMAGARDEN_CONTRACT_ADDRESS}/${tokenId}`}*/}
+                        {/*      fontSize="lg"*/}
+                        {/*      target={"_blank"}*/}
+                        {/*>*/}
+                        {/*    OpenSea <ExternalLinkIcon ml={1}/>*/}
+                        {/*</Link>*/}
                     </HStack>
                 </SimpleGrid>
             </Box>
@@ -266,40 +268,50 @@ export const NFT = () => {
                     onLoad={epochUpdate}
                 />
                 <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="14px" color={"green.700"}>
-                    <Box w="30%" textAlign="left">
-                        Minted with {getNftAttribute('Minted with sKLIMA')} sKLIMA
-                    </Box>
                     <Box w="70%">
                         <SimpleGrid columns={2}>
-                            <Box align={"right"}>Balance: {sklimaBalance} sKLIMA</Box>
-                            <Box alignItems={"bottom"}><Progress mt={1} ml={4} isIndeterminate={false} size="md" min={0} max={100} value={percentageComplete} backgroundColor={"gray.200"}/></Box>
+                            <Box alignItems={"bottom"}><Progress mt={1} mr={4} isIndeterminate={false} size="md" min={0} max={100} value={percentageComplete} backgroundColor={"gray.200"}/></Box>
+                            <Box align="left">
+                                <code>rebase in {convertHMS(secUntilRebase)}</code>
+                            </Box>
                         </SimpleGrid>
                     </Box>
-                </HStack>
-                <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="7px" color={"green.700"}>
-                    <Box w="30%" textAlign="left">
+                    <Box w="30%" align="right">
                         epoch {epochNumber}
                     </Box>
-                    <Box w="70%" textAlign="right">
-                        <code>
-                            rebase in {convertHMS(secUntilRebase)}
-                        </code>
+                </HStack>
+
+                <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="7px" color={"green.700"}>
+                    <Box w="70%" align={"left"}>Balance: {sklimaBalance} sKLIMA</Box>
+                    <Box w="30%" align="right">
+                        Minted with {getNftAttribute('Minted with sKLIMA')} sKLIMA
                     </Box>
                 </HStack>
 
                 <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="7px">
-                    <Box w="50%" textAlign="left">
-                        <code>
-                            <Link color="green.700" href={process.env.POLYGONSCAN_URL + "/address/" + nftOwnerAddress}  target="_blank">
-                                {nftOwnerAddress.substring(0, 5)+"..."+nftOwnerAddress.substring(-4, 4)}
-                                <ExternalLinkIcon marginLeft={2}/>
-                            </Link>
-                        </code>
+                    <Box w="70%" textAlign="left">
+                        <HStack>
+                            <code>
+                                <Link
+                                      color="green.700"
+                                      target="_blank"
+                                      href={Constants.OPENSEA_URL + "/assets/" + Constants.KLIMAGARDEN_CONTRACT_ADDRESS + "/" + tokenId}
+                                >
+                                    OpenSea
+                                    <Icon as={GiSailboat} w={5} h={5} marginLeft={2}/>
+                                </Link>
+                                <Link ml={4} color="green.700" href={process.env.REACT_APP_EXPLORER_URL + "/address/" + nftOwnerAddress}  target="_blank">
+                                    {nftOwnerAddress.substring(0, 5)+"..."+nftOwnerAddress.substring(-4, 4)}
+                                    <ExternalLinkIcon marginLeft={2}/>
+                                </Link>
+                            </code>
+                        </HStack>
+
                     </Box>
-                    <Box w="50%" textAlign="right">
+                    <Box w="30%" textAlign="right">
                         <Link color="green.700" href={imgUrl} target="_blank" cursor="pointer" alignSelf={"end"}>
                                 {nftMetadata?.name} ({getNftAttribute("rarity")})
-                                <LinkIcon marginLeft={2}/>
+                                <Icon as={FaFileImage} marginLeft={2}/>
                         </Link>
                     </Box>
                 </HStack>
