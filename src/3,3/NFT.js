@@ -1,29 +1,27 @@
-import blueridge from './blueridge.svg';
-import KlimaGardenNFT from '../utils/KlimaGardenNFT.json';
 import {useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
-import {Box, HStack, IconButton, Link, useMediaQuery, useToast, Progress, SimpleGrid} from "@chakra-ui/react";
-import {ethers} from "ethers";
-import {ExternalLinkIcon, Icon, LinkIcon, ChevronLeftIcon, ViewIcon} from "@chakra-ui/icons";
+import {Box, HStack, IconButton, Link, Progress, SimpleGrid, useMediaQuery, useToast} from "@chakra-ui/react";
+import {ChevronLeftIcon, ExternalLinkIcon, Icon} from "@chakra-ui/icons";
 import {FaFileImage} from "react-icons/fa";
 import {GiSailboat} from "react-icons/gi";
 import {BlueRidgeLoFi} from "./BlueRidgeLoFi";
+import {usePageVisibility} from "react-page-visibility";
+import PageVisibility from 'react-page-visibility';
 import {
     convertHMS,
+    getKlimaGardenContract,
     getKlimaStakingContract,
+    getSklimaContract,
     getSvg,
     removeAllChildNodes,
     secondsUntilBlock,
-    toastError,
-    getKlimaGardenContract,
-    getSklimaContract
+    toastError
 } from "./nftutils";
 
 import * as Constants from '../constants';
 
 
 export const NFT = () => {
-
     const [sklimaBalance, setSklimaBalance] = useState('--.---');
     const [rebaseBlock, setRebaseBlock] = useState(0);
     const [epochNumber, setEpochNumber] = useState(0);
@@ -34,7 +32,7 @@ export const NFT = () => {
     const [tokenId, setTokenId] = useState();
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
-
+    const isVisible = usePageVisibility();
 
     useInterval(() => {
         epochUpdate();
@@ -78,6 +76,11 @@ export const NFT = () => {
     }
 
     const epochUpdate = async () => {
+        console.log("pageIsVisible", isVisible);
+        if(!isVisible) {
+            return;
+        }
+
         console.log("Epoch update", Date.now());
         setIsUpdating(true);
 
@@ -166,8 +169,15 @@ export const NFT = () => {
         return attr;
     }
 
+    const handleVisibilityChange = (visible) => {
+        if(visible) {
+            epochUpdate();
+        }
+    }
+
     return (
-        <>
+        <PageVisibility onChange={handleVisibilityChange}>
+            <>
             <Box mb={3} ml={6} color="gray.600" textAlign="left" width={"100vw"}>
                 <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>
             </Box>
@@ -247,7 +257,8 @@ export const NFT = () => {
                     </SimpleGrid>
                 </Box>
             </Box>
-        </>
+            </>
+        </PageVisibility>
     );
 }
 

@@ -16,6 +16,8 @@ import {
 import {MenuLink} from "../MenuLink";
 import * as Constants from '../constants';
 import {useParams} from "react-router-dom";
+import {usePageVisibility} from "react-page-visibility";
+import PageVisibility from 'react-page-visibility';
 
 
 export const NFTGallery = () => {
@@ -29,6 +31,10 @@ export const NFTGallery = () => {
     const [secUntilRebase, setSecUntilRebase] = useState(0);
     const {variant} = useParams();
     const [percentageComplete, setPercentComplete] = useState(0);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const toast = useToast();
+    const isVisible = usePageVisibility();
+
     let nftMetadata;
 
     switch(variant) {
@@ -98,9 +104,6 @@ export const NFTGallery = () => {
 
     }
 
-    const [isUpdating, setIsUpdating] = useState(false);
-    const toast = useToast();
-
 
     useInterval(() => {
         epochUpdate();
@@ -110,10 +113,15 @@ export const NFTGallery = () => {
         if(!isUpdating) {
             setSecUntilRebase(secUntilRebase - 1);
         }
-    }, 1000)
+    }, 1000);
 
 
     const epochUpdate = async () => {
+        console.log("pageIsVisible", isVisible);
+        if(!isVisible) {
+            return;
+        }
+
         console.log("Epoch update", Date.now());
         setIsUpdating(true);
 
@@ -167,7 +175,7 @@ export const NFTGallery = () => {
             }
         }
 
-    }, [sklimaBalance, percentageComplete, nftOwnerAddress]);
+    }, [sklimaBalance, percentageComplete, nftOwnerAddress, epochUpdate]);
 
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
     const imgWidth = isLargerThan800 ? "1024px" : "100%";
@@ -185,8 +193,14 @@ export const NFTGallery = () => {
         return attr;
     }
 
+    const handleVisibilityChange = (visible) => {
+        if(visible) {
+            epochUpdate();
+        }
+    }
+
     return (
-        <>
+        <PageVisibility onChange={handleVisibilityChange}>
             <Box mb={3} color="gray.600" textAlign="left" width={"100vw"}>
 
                 <Stack
@@ -296,7 +310,7 @@ export const NFTGallery = () => {
                     </SimpleGrid>
                 </Box>
             </Box>
-        </>
+        </PageVisibility>
     );
 }
 

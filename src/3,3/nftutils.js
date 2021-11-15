@@ -2,6 +2,7 @@ import {ethers} from "ethers";
 import * as Constants from "../constants";
 import KlimaGardenNFT from "../utils/KlimaGardenNFT.json";
 
+
 export const toastError = (toast, err) => {
     let errMessage = "An error occurred";
     if(err.message !== undefined) {
