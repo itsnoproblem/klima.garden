@@ -142,6 +142,7 @@ const SwitchNetworkDialog = () => {
 
                         <AlertDialogBody>
                             You need to connect to the Polygon network to use Klima Garden.
+                            You can <Link color="yellow.400" href={"/3,3/gallery/1"}>preview available plots here</Link>.
                         </AlertDialogBody>
 
                         <AlertDialogFooter>

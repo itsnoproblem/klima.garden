@@ -123,8 +123,10 @@ export const NFTGallery = () => {
             return;
         }
 
-        console.log("Epoch update", Date.now());
+        const updateTime = Date.now();
+        console.log("Epoch update", updateTime);
         setIsUpdating(true);
+        setLastUpdate(updateTime);
 
         const EPOCH_SECONDS = 8 * 60 * 60;
         const rebaseInfo = await getKlimaStakingContract().epoch();

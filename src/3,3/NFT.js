@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
 import {Box, HStack, IconButton, Link, Progress, SimpleGrid, useMediaQuery, useToast} from "@chakra-ui/react";
 import {ChevronLeftIcon, ExternalLinkIcon, Icon} from "@chakra-ui/icons";
@@ -33,6 +33,8 @@ export const NFT = () => {
     const [tokenId, setTokenId] = useState();
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
+    const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
+    const imgWidth = isLargerThan800 ? "1024px" : "100%";
 
 
     useInterval(() => {
@@ -45,6 +47,18 @@ export const NFT = () => {
         }
     }, 1000);
 
+    const updateSklimaBalance = (owner) => {
+        const sklimaContract = getSklimaContract();
+        sklimaContract.balanceOf(owner).then(async (res) => {
+            console.log("got balance", res);
+            const formattedBalance = res.toNumber() / 1000000000;
+            const sKlimaBalance = formattedBalance.toPrecision(5).toString();
+            setSklimaBalance(sKlimaBalance);
+
+        }).catch((err) => {
+            toastError(toast, err);
+        });
+    }
 
     const fetchNFTData = async () => {
         if(nftMetadata !== undefined) {
@@ -122,19 +136,6 @@ export const NFT = () => {
         setIsUpdating(false);
     }
 
-    const updateSklimaBalance = (owner) => {
-        const sklimaContract = getSklimaContract();
-        sklimaContract.balanceOf(owner).then(async (res) => {
-            console.log("got balance", res);
-            const formattedBalance = res.toNumber() / 1000000000;
-            const sKlimaBalance = formattedBalance.toPrecision(5).toString();
-            setSklimaBalance(sKlimaBalance);
-
-        }).catch((err) => {
-            toastError(toast, err);
-        });
-    }
-
     useEffect(() => {
 
         if(lastUpdate < (Date.now() - 60000)) {
@@ -162,10 +163,7 @@ export const NFT = () => {
             }
         }
 
-    }, [sklimaBalance, percentageComplete, fetchNFTData, epochUpdate, nftOwnerAddress]);
-
-    const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
-    const imgWidth = isLargerThan800 ? "1024px" : "100%";
+    }, [sklimaBalance, percentageComplete, nftOwnerAddress, lastUpdate, epochUpdate, fetchNFTData]);
 
     const getNftAttribute = (name) => {
         let attr;
