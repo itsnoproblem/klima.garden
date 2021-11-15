@@ -7,15 +7,12 @@ import {ethers} from "ethers";
 import {ExternalLinkIcon, Icon, LinkIcon, ChevronLeftIcon, ViewIcon} from "@chakra-ui/icons";
 import {FaFileImage} from "react-icons/fa";
 import {GiSailboat} from "react-icons/gi";
+import {BlueRidgeLoFi} from "./BlueRidgeLoFi";
 
 import * as Constants from '../constants';
 
 
 export const NFT = () => {
-    // **** Data from NFT ****
-    const imgName = 'Blue Ridge Lo-Fi';
-    const imgHash = 'QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG';
-    const imgUrl = process.env.REACT_APP_IPFS_GATEWAY_URL + '/ipfs/' + imgHash;
 
     const [sklimaBalance, setSklimaBalance] = useState('--.---');
     const [rebaseBlock, setRebaseBlock] = useState(0);
@@ -120,12 +117,16 @@ export const NFT = () => {
 
             const contract = getKlimaGardenContract();
             contract.ownerOf(tokenId).then((owner) => {
+                owner = "0x9B394B315Ada446A1fAe283b7C84Cc139B30bd16"; // OVERRIDE FOR TESTING
                 setNftOwnerAddress(owner);
                 updateSklimaBalance(owner);
             });
 
             contract.tokenURI(tokenId).then((uri) => {
                 const metadata = JSON.parse(atob(uri.replace("data:application/json;base64,", "")));
+                metadata.imgUrl = metadata.image?.replace('ipfs://', process.env.REACT_APP_IPFS_GATEWAY_URL)
+                // metadata.image = 'ipfs://QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF';
+                // metadata.image = 'ipfs://QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9';
                 setNftMetadata(metadata);
                 console.log("tokenURI", metadata);
             });
@@ -238,6 +239,7 @@ export const NFT = () => {
         return attr;
     }
 
+
     return (
         <>
             <Box mb={3} ml={6} color="gray.600" textAlign="left" width={"100%"}>
@@ -258,38 +260,53 @@ export const NFT = () => {
                 </SimpleGrid>
             </Box>
             <Box borderColor="gray.50" borderWidth="14px">
-                <object
-                    id="nft"
-                    type="image/svg+xml"
-                    data={blueridge}
-                    width={imgWidth}
-                    style={{"objectFit": "contain"}}
-                    aria-label={nftMetadata?.name}
-                    onLoad={epochUpdate}
-                />
-                <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="14px" color={"green.700"}>
-                    <Box w="70%">
-                        <SimpleGrid columns={2}>
+                {/* **************** */}
+                {/* blue ridge lo-fi */}
+                {/* **************** */}
+                {(nftMetadata?.image === "ipfs://QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG") && (
+                    <BlueRidgeLoFi width={imgWidth} name={nftMetadata?.name} onLoad={epochUpdate}/>
+                )}
+
+                {/* *********** */}
+                {/* sequestered */}
+                {/* *********** */}
+                {(nftMetadata?.image === "ipfs://QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF") && (
+                    <video width={1024} autoPlay loop>
+                        <source src="https://gateway.pinata.cloud/ipfs/QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF" type="video/mp4"/>
+                        Your browser does not support the video tag.
+                    </video>
+                )}
+
+                {/* *********** */}
+                {/* tree tree   */}
+                {/* *********** */}
+                {(nftMetadata?.image === "ipfs://QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9") && (
+                    <video width={1024} autoPlay loop>
+                        <source src="https://gateway.pinata.cloud/ipfs/QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9" type="video/mp4"/>
+                        Your browser does not support the video tag.
+                    </video>
+                )}
+
+
+                <SimpleGrid columns={[1,2]} w="100%" fontSize="sm" backgroundColor="gray.50" paddingTop="14px" color={"green.700"}>
+                    <Box>
+                        <SimpleGrid columns={[1,2]}>
                             <Box alignItems={"bottom"}><Progress mt={1} mr={4} isIndeterminate={false} size="md" min={0} max={100} value={percentageComplete} backgroundColor={"gray.200"}/></Box>
                             <Box align="left">
                                 <code>rebase in {convertHMS(secUntilRebase)}</code>
                             </Box>
                         </SimpleGrid>
                     </Box>
-                    <Box w="30%" align="right">
+                    <Box textAlign={{base: "left", lg: "right"}}>
                         epoch {epochNumber}
                     </Box>
-                </HStack>
 
-                <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="7px" color={"green.700"}>
-                    <Box w="70%" align={"left"}>Balance: {sklimaBalance} sKLIMA</Box>
-                    <Box w="30%" align="right">
+                    <Box align={"left"}>Balance: {sklimaBalance} sKLIMA</Box>
+                    <Box textAlign={["left", "right"]}>
                         Minted with {getNftAttribute('Minted with sKLIMA')} sKLIMA
                     </Box>
-                </HStack>
 
-                <HStack fontSize="sm" backgroundColor="gray.50" paddingTop="7px">
-                    <Box w="70%" textAlign="left">
+                    <Box textAlign="left">
                         <HStack>
                             <code>
                                 <Link
@@ -308,13 +325,13 @@ export const NFT = () => {
                         </HStack>
 
                     </Box>
-                    <Box w="30%" textAlign="right">
-                        <Link color="green.700" href={imgUrl} target="_blank" cursor="pointer" alignSelf={"end"}>
+                    <Box textAlign={["left", "right"]}>
+                        <Link color="green.700" href={nftMetadata?.imgUrl} target="_blank" cursor="pointer" alignSelf={"end"}>
                                 {nftMetadata?.name} ({getNftAttribute("rarity")})
                                 <Icon as={FaFileImage} marginLeft={2}/>
                         </Link>
                     </Box>
-                </HStack>
+                </SimpleGrid>
             </Box>
         </>
     );

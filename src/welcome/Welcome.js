@@ -26,7 +26,7 @@ import KlimaGardenNFT from '../utils/KlimaGardenNFT.json';
 import ConnectButton from "./ConnectButton";
 import SwitchNetworkDialog from "./SwitchNetworkDialog";
 import * as Constants from "../constants";
-
+import WelcomeMenu from "./WelcomeMenu";
 
 export const Welcome = () => {
     const [currentAccount, setCurrentAccount] = useState("");
@@ -108,26 +108,16 @@ export const Welcome = () => {
         }
     }
 
-    useEffect (() => {
-        // console.log("CURRENT ACCOUNT", currentAccount);
-        // if(currentAccount !== "") {
-        //     const sklimaContract = getSklimaContract();
-        //     sklimaContract.balanceOf(currentAccount).then(async (res) => {
-        //         const formattedBalance = res.toNumber() / 1000000000;
-        //         console.log("sklima balance", formattedBalance);
-        //         setSklimaBalance(formattedBalance);
-        //         setSklimaBalanceRaw(res);
-        //     }).catch((err) => {
-        //         toastError(err);
-        //     });
-        // }
-    })
+    // useEffect (() => {
+    //
+    // })
 
     return(
         <>
             <SwitchNetworkDialog/>
             <Box minH={"100vh"} minW={"100vw"} bg={"blue.200"} textAlign={"center"}>
-                <Image src={"/klima-garden.gif"} margin={"auto"} mt={["10", "20"]}/>
+                <WelcomeMenu/>
+                <Image src={"/klima-garden.gif"} margin={"auto"} mt={["5", "16"]}/>
                 <Box textShadow={"1px 1px #381200"}
                       color={"#83c305"}
                       fontSize={["xl", "3xl"]}
@@ -174,8 +164,8 @@ export const Welcome = () => {
                             lineHeight={"1.5em"}
                             mb={4}
                         >
-                            sKLIMA holders can mint for 0.033 ETH.<br/>
-                            Plot assignments are random.
+                            <Text>Mint for 0.033 ETH</Text>
+                            <Text>Plot assignments are random</Text>
                         </Box>
                         <Box mb={"20"}>
                             <Popover colorScheme={"blue"}>

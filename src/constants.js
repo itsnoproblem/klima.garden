@@ -1,5 +1,5 @@
 // Constants
-export const KLIMAGARDEN_CONTRACT_ADDRESS = "0x7112de66c16eda02bd6be28c0b9306Cde77B9755";
+export const KLIMAGARDEN_CONTRACT_ADDRESS = "0xd12d6Dacdc60cDA107157AB1BD35acE33b9c10A4";
 // export const KLIMAGARDEN_CONTRACT_ADDRESS = "mainnet-address-here";
 
 // export const CHAIN_ID = 137; // polygon mainnet
@@ -24,7 +24,7 @@ export const networks = {
             symbol: "MATIC",
             decimals: 18,
         },
-        rpcUrls: ["https://matic-mainnet.chainstacklabs.com"],
+        rpcUrls: ["https://polygon-rpc.com/"],
         blockExplorerUrls: ["https://polygonscan.com"]
     },
     80001: {
