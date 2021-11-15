@@ -1,5 +1,6 @@
 import {ethers} from "ethers";
 import * as Constants from "../constants";
+import KlimaGardenNFT from "../utils/KlimaGardenNFT.json";
 
 export const toastError = (toast, err) => {
     let errMessage = "An error occurred";
@@ -44,10 +45,19 @@ export const ethersProvider = () => {
     return  alchemyProvider;
 }
 
+export const getSklimaContract = () => {
+    const provider = ethersProvider();
+    return new ethers.Contract(Constants.SKLIMA_CONTRACT_ADDRESS, Constants.SKLIMA_ABI, provider);
+}
 
 export const getKlimaStakingContract = () => {
     const provider = ethersProvider();
     return new ethers.Contract(Constants.KLIMA_STAKING_CONTRACT_ADDRESS, Constants.KLIMA_STAKING_ABI, provider);
+}
+
+export const getKlimaGardenContract =() => {
+    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_MUMBAI_PROVIDER_URL);
+    return new ethers.Contract(Constants.KLIMAGARDEN_CONTRACT_ADDRESS, KlimaGardenNFT.abi, provider);
 }
 
 export const getSvg = () => {
