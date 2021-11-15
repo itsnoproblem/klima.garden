@@ -26,7 +26,9 @@ import KlimaGardenNFT from '../utils/KlimaGardenNFT.json';
 import ConnectButton from "./ConnectButton";
 import SwitchNetworkDialog from "./SwitchNetworkDialog";
 import * as Constants from "../constants";
-
+import WelcomeMenu from "./WelcomeMenu";
+import {ArrowForwardIcon} from "@chakra-ui/icons";
+import {MenuLink} from "../MenuLink";
 
 export const Welcome = () => {
     const [currentAccount, setCurrentAccount] = useState("");
@@ -38,11 +40,6 @@ export const Welcome = () => {
 
     const ethersProvider = () => {
         return new ethers.providers.AlchemyProvider(process.env.REACT_APP_ALCHEMY_PROVIDER_NETWORK, process.env.REACT_APP_ALCHEMY_PROVIDER_API_KEY);
-    }
-
-    const getSklimaContract = () => {
-        const provider = ethersProvider();
-        return new ethers.Contract(Constants.SKLIMA_CONTRACT_ADDRESS, Constants.SKLIMA_ABI, provider);
     }
 
     const toastError = (err) => {
@@ -108,26 +105,16 @@ export const Welcome = () => {
         }
     }
 
-    useEffect (() => {
-        // console.log("CURRENT ACCOUNT", currentAccount);
-        // if(currentAccount !== "") {
-        //     const sklimaContract = getSklimaContract();
-        //     sklimaContract.balanceOf(currentAccount).then(async (res) => {
-        //         const formattedBalance = res.toNumber() / 1000000000;
-        //         console.log("sklima balance", formattedBalance);
-        //         setSklimaBalance(formattedBalance);
-        //         setSklimaBalanceRaw(res);
-        //     }).catch((err) => {
-        //         toastError(err);
-        //     });
-        // }
-    })
+    // useEffect (() => {
+    //
+    // })
 
     return(
         <>
             <SwitchNetworkDialog/>
             <Box minH={"100vh"} minW={"100vw"} bg={"blue.200"} textAlign={"center"}>
-                <Image src={"/klima-garden.gif"} margin={"auto"} mt={["10", "20"]}/>
+                {/*<WelcomeMenu/>*/}
+                <Image src={"/klima-garden.gif"} margin={"auto"} mt={["5", "16"]}/>
                 <Box textShadow={"1px 1px #381200"}
                       color={"#83c305"}
                       fontSize={["xl", "3xl"]}
@@ -149,8 +136,8 @@ export const Welcome = () => {
                             </VStack>
                         ) : (
                             <>
-                                <Button  mt={8}
-                                         mb={8}
+                                <Button  mt={6}
+                                         mb={6}
                                          fontFamily='"Press Start 2P", monospace'
                                          color={"cyan.100"}
                                          borderColor={"cyan.100"}
@@ -174,10 +161,10 @@ export const Welcome = () => {
                             lineHeight={"1.5em"}
                             mb={4}
                         >
-                            sKLIMA holders can mint for 0.033 ETH.<br/>
-                            Plot assignments are random.
+                            <Text>Mint for 0.033 ETH</Text>
+                            <Text>Plot assignments are random</Text>
                         </Box>
-                        <Box mb={"20"}>
+                        <Box>
                             <Popover colorScheme={"blue"}>
                                 <PopoverTrigger>
                                     <Badge
@@ -221,6 +208,9 @@ export const Welcome = () => {
                                     </PopoverBody>
                                 </PopoverContent>
                             </Popover>
+                            <Box mt={4}>
+                                <MenuLink Href={"/3,3/gallery/1"} value={(<b>gallery</b>)} color={"blue.500"} hoverColor={"purple.500"}/>
+                            </Box>
                         </Box>
                     </>
                 )}

@@ -1,38 +1,109 @@
 import {useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
-import {Box, HStack, IconButton, Link, Progress, SimpleGrid, useMediaQuery, useToast} from "@chakra-ui/react";
+import {Box, HStack, IconButton, Link, Progress, SimpleGrid, Stack, useMediaQuery, useToast} from "@chakra-ui/react";
 import {ChevronLeftIcon, ExternalLinkIcon, Icon} from "@chakra-ui/icons";
 import {FaFileImage} from "react-icons/fa";
 import {GiSailboat} from "react-icons/gi";
 import {BlueRidgeLoFi} from "./BlueRidgeLoFi";
-import {usePageVisibility} from "react-page-visibility";
-import PageVisibility from 'react-page-visibility';
 import {
     convertHMS,
-    getKlimaGardenContract,
     getKlimaStakingContract,
-    getSklimaContract,
     getSvg,
     removeAllChildNodes,
     secondsUntilBlock,
-    toastError
+    toastError,
 } from "./nftutils";
-
+import {MenuLink} from "../MenuLink";
 import * as Constants from '../constants';
+import {useParams} from "react-router-dom";
+import {usePageVisibility} from "react-page-visibility";
+import PageVisibility from 'react-page-visibility';
 
 
-export const NFT = () => {
-    const [sklimaBalance, setSklimaBalance] = useState('--.---');
+export const NFTGallery = () => {
+
+    const sklimaBalance = "323.00";
+    const nftOwnerAddress = "0x0";
+    const tokenId = 0;
+
     const [rebaseBlock, setRebaseBlock] = useState(0);
     const [epochNumber, setEpochNumber] = useState(0);
     const [secUntilRebase, setSecUntilRebase] = useState(0);
+    const {variant} = useParams();
     const [percentageComplete, setPercentComplete] = useState(0);
-    const [nftOwnerAddress, setNftOwnerAddress] = useState("");
-    const [nftMetadata, setNftMetadata] = useState();
-    const [tokenId, setTokenId] = useState();
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
     const isVisible = usePageVisibility();
+
+    let nftMetadata;
+
+    switch(variant) {
+        case "1":
+            nftMetadata = {
+                "name": "Blue Ridge Lo-Fi",
+                "description": "A tribute to the earth's natural beauty made visible by human ingenuity.",
+                "image": "ipfs://QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG",
+                "external_link": "https://klima.garden/3,3/1",
+                "attributes": [
+                    {
+                        "trait_type": "rarity",
+                        "value": "common - 1 of 1000"
+                    },
+                    {
+                        "trait_type": "Minted with sKLIMA",
+                        "display_type": "number",
+                        "value": "0"
+                    }
+                ],
+                "imgUrl": "https://gateway.pinata.cloudQmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"
+            }
+            break;
+
+        case "2":
+            nftMetadata = {
+                "name": "Comfy (🌳, 🌳)",
+                "description": "",
+                "image": "ipfs://QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9",
+                "external_link": "https://klima.garden/3,3/1",
+                "attributes": [
+                    {
+                        "trait_type": "rarity",
+                        "value": "rare - 1 of 323"
+                    },
+                    {
+                        "trait_type": "Minted with sKLIMA",
+                        "display_type": "number",
+                        "value": "0"
+                    }
+                ],
+                "imgUrl": "https://gateway.pinata.cloudQmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"
+            }
+            break;
+
+        case "3":
+            nftMetadata = {
+                "name": "Sequestered",
+                "description": "",
+                "image": "ipfs://QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF",
+                "external_link": "https://klima.garden/3,3/1",
+                "attributes": [
+                    {
+                        "trait_type": "rarity",
+                        "value": "ultra-rare - 1 of 33"
+                    },
+                    {
+                        "trait_type": "Minted with sKLIMA",
+                        "display_type": "number",
+                        "value": "0"
+                    }
+                ],
+                "imgUrl": "https://gateway.pinata.cloudQmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"
+            }
+            break;
+
+
+    }
+
 
     useInterval(() => {
         epochUpdate();
@@ -44,36 +115,6 @@ export const NFT = () => {
         }
     }, 1000);
 
-
-    const fetchNFTData = async () => {
-        try {
-            const url = new URL(window.location);
-            const tokenFromPath = url.pathname.substring(url.pathname.lastIndexOf('/')+1)
-            const tokenId = tokenFromPath;
-            setTokenId(tokenFromPath);
-
-            const contract = getKlimaGardenContract();
-            contract.ownerOf(tokenId).then((owner) => {
-                setNftOwnerAddress(owner);
-                updateSklimaBalance(owner);
-            });
-
-            contract.tokenURI(tokenId).then((uri) => {
-                const metadata = JSON.parse(atob(uri.replace("data:application/json;base64,", "")));
-                metadata.imgUrl = metadata.image?.replace('ipfs://', process.env.REACT_APP_IPFS_GATEWAY_URL)
-                // metadata.image = 'ipfs://QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF';
-                // metadata.image = 'ipfs://QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9';
-                setNftMetadata(metadata);
-                console.log("tokenURI", metadata);
-            });
-        }
-        catch(err) {
-            console.log(err);
-            setNftOwnerAddress("failed");
-            console.log(err.args)
-            toastError(toast, err);
-        }
-    }
 
     const epochUpdate = async () => {
         console.log("pageIsVisible", isVisible);
@@ -99,7 +140,10 @@ export const NFT = () => {
 
         const epochNum = rebaseInfo[1].toNumber();
         const rebaseBlk = rebaseInfo[2].toNumber();
-        const seconds = await secondsUntilBlock(rebaseBlk);
+        const seconds = await secondsUntilBlock(rebaseBlk).catch((e) => {
+            toastError(toast, e);
+            return -1;
+        });
         const perc = ((EPOCH_SECONDS - seconds) / EPOCH_SECONDS) * 100;
         const pcomplete = Math.round(perc);
         setEpochNumber(epochNum);
@@ -107,32 +151,12 @@ export const NFT = () => {
         setSecUntilRebase(seconds);
         setPercentComplete(pcomplete);
         console.log("percentage complete", pcomplete);
-
-        if(nftOwnerAddress && nftOwnerAddress !== "failed") {
-            updateSklimaBalance(nftOwnerAddress);
-        }
-
         setIsUpdating(false);
     }
 
-    const updateSklimaBalance = (owner) => {
-        const sklimaContract = getSklimaContract();
-        sklimaContract.balanceOf(owner).then(async (res) => {
-            console.log("got balance", res);
-            const formattedBalance = res.toNumber() / 1000000000;
-            const sKlimaBalance = formattedBalance.toPrecision(5).toString();
-            setSklimaBalance(sKlimaBalance);
-
-        }).catch((err) => {
-            toastError(toast, err);
-        });
-    }
-
     useEffect(() => {
-
         window.addEventListener('load', () => {
-            fetchNFTData();
-            epochUpdate();
+           epochUpdate();
         });
 
         const svgObject = getSvg();
@@ -151,7 +175,7 @@ export const NFT = () => {
             }
         }
 
-    }, [sklimaBalance, percentageComplete, fetchNFTData, epochUpdate, nftOwnerAddress]);
+    }, [sklimaBalance, percentageComplete, nftOwnerAddress, epochUpdate]);
 
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
     const imgWidth = isLargerThan800 ? "1024px" : "100%";
@@ -177,12 +201,41 @@ export const NFT = () => {
 
     return (
         <PageVisibility onChange={handleVisibilityChange}>
-            <>
-            <Box mb={3} ml={6} color="gray.600" textAlign="left" width={"100vw"}>
-                <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>
+            <Box mb={3} color="gray.600" textAlign="left" width={"100vw"}>
+
+                <Stack
+                    ml={[0, 4]}
+                    spacing={8}
+                    align="center"
+                    justify={["center", "space-between", "flex-start", "flex-start"]}
+                    direction={["row", "row", "row", "row"]}
+                    pt={[4, 4, 0, 0]}
+                >
+                    <Box>
+                        <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>
+                    </Box>
+                    <MenuLink isSelected={variant === "1"} Href="/3,3/gallery/1" value="common"/>
+                    <MenuLink isSelected={variant === "2"} Href="/3,3/gallery/2" value="rare"/>
+                    <MenuLink isSelected={variant === "3"} Href="/3,3/gallery/3" value="ultra rare"/>
+                    <MenuLink isSelected={variant === "4"} Href="/3,3/gallery/4" value="one-of-a-kind"/>
+                </Stack>
+                {/*<SimpleGrid columns={2} top={3} width={"100%"}>*/}
+                {/*    <Box>*/}
+                {/*        <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>*/}
+                {/*    </Box>*/}
+                {/*    <Box>*/}
+                {/*        <Tabs>*/}
+                {/*            <TabList>*/}
+                {/*                <Tab>One</Tab>*/}
+                {/*                <Tab>Two</Tab>*/}
+                {/*                <Tab>Three</Tab>*/}
+                {/*            </TabList>*/}
+                {/*        </Tabs>*/}
+                {/*    </Box>*/}
+                {/*</SimpleGrid>*/}
             </Box>
             <Box w={["100vw", "inherit"]}>
-                <Box borderColor="gray.50" borderWidth="14px" overflow={"hidden"}>
+                <Box borderColor="gray.50" borderWidth="14px" m={0}>
                     {/* **************** */}
                     {/* blue ridge lo-fi */}
                     {/* **************** */}
@@ -233,9 +286,9 @@ export const NFT = () => {
                             <HStack>
                                 <code>
                                     <Link
-                                          color="green.700"
-                                          target="_blank"
-                                          href={Constants.OPENSEA_URL + "/assets/" + Constants.KLIMAGARDEN_CONTRACT_ADDRESS + "/" + tokenId}
+                                        color="green.700"
+                                        target="_blank"
+                                        href={Constants.OPENSEA_URL + "/assets/" + Constants.KLIMAGARDEN_CONTRACT_ADDRESS + "/" + tokenId}
                                     >
                                         OpenSea
                                         <Icon as={GiSailboat} w={5} h={5} marginLeft={2}/>
@@ -250,14 +303,13 @@ export const NFT = () => {
                         </Box>
                         <Box textAlign={["left", "right"]}>
                             <Link color="green.700" href={nftMetadata?.imgUrl} target="_blank" cursor="pointer" alignSelf={"end"}>
-                                    {nftMetadata?.name} ({getNftAttribute("rarity")})
-                                    <Icon as={FaFileImage} marginLeft={2}/>
+                                {nftMetadata?.name} ({getNftAttribute("rarity")})
+                                <Icon as={FaFileImage} marginLeft={2}/>
                             </Link>
                         </Box>
                     </SimpleGrid>
                 </Box>
             </Box>
-            </>
         </PageVisibility>
     );
 }
