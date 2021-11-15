@@ -5,7 +5,6 @@ import {ChevronLeftIcon, ExternalLinkIcon, Icon} from "@chakra-ui/icons";
 import {FaFileImage} from "react-icons/fa";
 import {GiSailboat} from "react-icons/gi";
 import {BlueRidgeLoFi} from "./BlueRidgeLoFi";
-import {usePageVisibility} from "react-page-visibility";
 import PageVisibility from 'react-page-visibility';
 import {
     convertHMS,
@@ -23,16 +22,18 @@ import * as Constants from '../constants';
 
 export const NFT = () => {
     const [sklimaBalance, setSklimaBalance] = useState('--.---');
+    const [lastUpdate, setLastUpdate] = useState();
     const [rebaseBlock, setRebaseBlock] = useState(0);
     const [epochNumber, setEpochNumber] = useState(0);
     const [secUntilRebase, setSecUntilRebase] = useState(0);
     const [percentageComplete, setPercentComplete] = useState(0);
     const [nftOwnerAddress, setNftOwnerAddress] = useState("");
     const [nftMetadata, setNftMetadata] = useState();
+    const [browserIsVisible, setBrowserIsVisible] = useState(true);
     const [tokenId, setTokenId] = useState();
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
-    const isVisible = usePageVisibility();
+
 
     useInterval(() => {
         epochUpdate();
@@ -46,6 +47,10 @@ export const NFT = () => {
 
 
     const fetchNFTData = async () => {
+        if(nftMetadata !== undefined) {
+            return;
+        }
+
         try {
             const url = new URL(window.location);
             const tokenFromPath = url.pathname.substring(url.pathname.lastIndexOf('/')+1)
@@ -76,13 +81,15 @@ export const NFT = () => {
     }
 
     const epochUpdate = async () => {
-        console.log("pageIsVisible", isVisible);
-        if(!isVisible) {
+        console.log("browserIsVisible", browserIsVisible);
+        if(!browserIsVisible) {
             return;
         }
 
-        console.log("Epoch update", Date.now());
+        const updateTime = Date.now();
+        console.log("Epoch update", updateTime);
         setIsUpdating(true);
+        setLastUpdate(updateTime);
 
         const EPOCH_SECONDS = 8 * 60 * 60;
         const rebaseInfo = await getKlimaStakingContract().epoch();
@@ -130,6 +137,10 @@ export const NFT = () => {
 
     useEffect(() => {
 
+        if(lastUpdate < (Date.now() - 60000)) {
+            epochUpdate();
+        }
+
         window.addEventListener('load', () => {
             fetchNFTData();
             epochUpdate();
@@ -170,9 +181,7 @@ export const NFT = () => {
     }
 
     const handleVisibilityChange = (visible) => {
-        if(visible) {
-            epochUpdate();
-        }
+        setBrowserIsVisible(visible);
     }
 
     return (

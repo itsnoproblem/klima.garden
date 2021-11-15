@@ -21,7 +21,6 @@ import PageVisibility from 'react-page-visibility';
 
 
 export const NFTGallery = () => {
-
     const sklimaBalance = "323.00";
     const nftOwnerAddress = "0x0";
     const tokenId = 0;
@@ -29,6 +28,8 @@ export const NFTGallery = () => {
     const [rebaseBlock, setRebaseBlock] = useState(0);
     const [epochNumber, setEpochNumber] = useState(0);
     const [secUntilRebase, setSecUntilRebase] = useState(0);
+    const [lastUpdate, setLastUpdate] = useState();
+    const [browserIsVisible, setBrowserIsVisible] = useState(true);
     const {variant} = useParams();
     const [percentageComplete, setPercentComplete] = useState(0);
     const [isUpdating, setIsUpdating] = useState(false);
@@ -117,8 +118,8 @@ export const NFTGallery = () => {
 
 
     const epochUpdate = async () => {
-        console.log("pageIsVisible", isVisible);
-        if(!isVisible) {
+        console.log("browserIsVisible", browserIsVisible);
+        if(!browserIsVisible) {
             return;
         }
 
@@ -155,6 +156,10 @@ export const NFTGallery = () => {
     }
 
     useEffect(() => {
+        if(lastUpdate < (Date.now() - 60000)) {
+            epochUpdate();
+        }
+        
         window.addEventListener('load', () => {
            epochUpdate();
         });
@@ -201,6 +206,7 @@ export const NFTGallery = () => {
 
     return (
         <PageVisibility onChange={handleVisibilityChange}>
+            <>
             <Box mb={3} color="gray.600" textAlign="left" width={"100vw"}>
 
                 <Stack
@@ -310,6 +316,7 @@ export const NFTGallery = () => {
                     </SimpleGrid>
                 </Box>
             </Box>
+            </>
         </PageVisibility>
     );
 }
