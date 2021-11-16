@@ -179,7 +179,8 @@ export const NFTGallery = () => {
         }
         
         window.addEventListener('load', () => {
-           epochUpdate();
+            window.fathom.trackGoal('LO0B7T2H', 0);
+            epochUpdate();
         });
 
         const svgObject = getSvg();

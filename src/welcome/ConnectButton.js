@@ -101,6 +101,9 @@ export default function ConnectButton(props) {
 
     const confirmMint = (from, tokenId) => {
         console.log(from, tokenId.toNumber());
+
+        window.fathom.trackGoal('K6IQJL9J', 0.33);
+
         const url = Constants.OPENSEA_URL + `/${Constants.KLIMAGARDEN_CONTRACT_ADDRESS}/${tokenId.toNumber()}`
         if(!toast.isActive(tokenId.toNumber())) {
             toast({

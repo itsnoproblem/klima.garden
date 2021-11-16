@@ -70,6 +70,9 @@ export const Welcome = () => {
                 const provider = new ethers.providers.Web3Provider(ethereum);
                 const signer = provider.getSigner();
                 const connectedContract = new ethers.Contract(Constants.KLIMAGARDEN_CONTRACT_ADDRESS, KlimaGardenNFT.abi, signer);
+                const addr = await signer.getAddress();
+
+                window.fathom.trackGoal('OMD4FKVL', 0);
 
                 try {
                     console.log("Going to pop wallet now to pay gas...")
@@ -77,6 +80,9 @@ export const Welcome = () => {
                     let nftTxn = await connectedContract.makeNFT(sklimaBalanceRaw);
                     console.log("Mining...please wait.")
                     setMintStatus("confirming...");
+
+                    window.fathom.trackGoal('SX2IES2N', 0);
+
                     await nftTxn.wait();
 
                     const explorerUrl = Constants.networks[Constants.CHAIN_ID].blockExplorerUrls[0];
@@ -84,6 +90,7 @@ export const Welcome = () => {
                     setMintStatus("Success!");
                 }
                 catch(err) {
+                    window.fathom.trackGoal('7DCJM3MX', 0);
                     toastError(err);
                 }
 
