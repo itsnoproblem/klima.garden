@@ -133,7 +133,7 @@ export const NFT = () => {
         setIsUpdating(false);
     },[browserIsVisible, setIsUpdating, setLastUpdate, nftOwnerAddress, rebaseBlock, updateSklimaBalance]);
 
-    useEffect(() => { 
+    useEffect(() => {
 
         if(lastUpdate < (Date.now() - 60000)) {
             epochUpdate();

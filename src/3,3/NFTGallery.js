@@ -29,12 +29,11 @@ export const NFTGallery = () => {
     const [epochNumber, setEpochNumber] = useState(0);
     const [secUntilRebase, setSecUntilRebase] = useState(0);
     const [lastUpdate, setLastUpdate] = useState();
-    const [browserIsVisible, setBrowserIsVisible] = useState(true);
+    const [browserIsVisible, ] = useState(true);
     const {variant} = useParams();
     const [percentageComplete, setPercentComplete] = useState(0);
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
-    const isVisible = usePageVisibility();
 
     let nftMetadata;
 
@@ -56,7 +55,7 @@ export const NFTGallery = () => {
                         "value": "0"
                     }
                 ],
-                "imgUrl": "https://gateway.pinata.cloudQmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"
+                "imgUrl": "https://gateway.pinata.cloud/QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"
             }
             break;
 
@@ -77,7 +76,7 @@ export const NFTGallery = () => {
                         "value": "0"
                     }
                 ],
-                "imgUrl": "https://gateway.pinata.cloudQmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"
+                "imgUrl": "https://gateway.pinata.cloud/QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9"
             }
             break;
 
@@ -98,11 +97,29 @@ export const NFTGallery = () => {
                         "value": "0"
                     }
                 ],
-                "imgUrl": "https://gateway.pinata.cloudQmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"
+                "imgUrl": "https://gateway.pinata.cloud/QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF"
             }
             break;
 
-
+        default:
+            nftMetadata = {
+                "name": "Coming Soon",
+                "description": "",
+                "image": "ipfs://QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ",
+                "external_link": "https://klima.garden/3,3/0",
+                "attributes": [
+                    {
+                        "trait_type": "rarity",
+                        "value": "still working on this one"
+                    },
+                    {
+                        "trait_type": "Minted with sKLIMA",
+                        "display_type": "number",
+                        "value": "0"
+                    }
+                ],
+                "imgUrl": "https://gateway.pinata.cloud/QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ"
+            }
     }
 
 
@@ -267,6 +284,16 @@ export const NFTGallery = () => {
                     {(nftMetadata?.image === "ipfs://QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9") && (
                         <video width={1024} autoPlay loop>
                             <source src="https://gateway.pinata.cloud/ipfs/QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9" type="video/mp4"/>
+                            Your browser does not support the video tag.
+                        </video>
+                    )}
+
+                    {/* *********** */}
+                    {/* not found   */}
+                    {/* *********** */}
+                    {(nftMetadata?.image === "ipfs://QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ") && (
+                        <video width={1024} autoPlay loop>
+                            <source src="https://gateway.pinata.cloud/ipfs/QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ" type="video/mp4"/>
                             Your browser does not support the video tag.
                         </video>
                     )}
