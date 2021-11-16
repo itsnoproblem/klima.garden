@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
 import {Box, HStack, IconButton, Link, Progress, SimpleGrid, Stack, useMediaQuery, useToast} from "@chakra-ui/react";
 import {ChevronLeftIcon, ExternalLinkIcon, Icon} from "@chakra-ui/icons";
@@ -16,7 +16,6 @@ import {
 import {MenuLink} from "../MenuLink";
 import * as Constants from '../constants';
 import {useParams} from "react-router-dom";
-import {usePageVisibility} from "react-page-visibility";
 import PageVisibility from 'react-page-visibility';
 
 
@@ -134,7 +133,7 @@ export const NFTGallery = () => {
     }, 1000);
 
 
-    const epochUpdate = async () => {
+    const epochUpdate = useCallback(async () => {
         console.log("browserIsVisible", browserIsVisible);
         if(!browserIsVisible) {
             return;
@@ -172,7 +171,7 @@ export const NFTGallery = () => {
         setPercentComplete(pcomplete);
         console.log("percentage complete", pcomplete);
         setIsUpdating(false);
-    }
+    },[browserIsVisible, setIsUpdating, setLastUpdate, rebaseBlock, toast]);
 
     useEffect(() => {
         if(lastUpdate < (Date.now() - 60000)) {
@@ -199,7 +198,7 @@ export const NFTGallery = () => {
             }
         }
 
-    }, [sklimaBalance, percentageComplete, nftOwnerAddress, epochUpdate]);
+    }, [sklimaBalance, percentageComplete, nftOwnerAddress, epochUpdate, lastUpdate]);
 
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
     const imgWidth = isLargerThan800 ? "1024px" : "100%";

@@ -20,27 +20,21 @@ import {
     useToast,
     VStack
 } from "@chakra-ui/react";
-import React, {useEffect, useState} from "react";
-import {ethers, BigNumber} from "ethers";
+import React, {useState} from "react";
+import {BigNumber, ethers} from "ethers";
 import KlimaGardenNFT from '../utils/KlimaGardenNFT.json';
 import ConnectButton from "./ConnectButton";
 import SwitchNetworkDialog from "./SwitchNetworkDialog";
 import * as Constants from "../constants";
-import WelcomeMenu from "./WelcomeMenu";
-import {ArrowForwardIcon} from "@chakra-ui/icons";
 import {MenuLink} from "../MenuLink";
 
 export const Welcome = () => {
     const [currentAccount, setCurrentAccount] = useState("");
     const [isMinting, setIsMinting] = useState(false);
     const [mintStatus, setMintStatus] = useState("");
-    const [sklimaBalance, setSklimaBalance] = useState(0);
-    const [sklimaBalanceRaw, setSklimaBalanceRaw] = useState(BigNumber.from(0));
+    const [sklimaBalance, ] = useState(0);
+    const [sklimaBalanceRaw, ] = useState(BigNumber.from(0));
     const toast = useToast();
-
-    const ethersProvider = () => {
-        return new ethers.providers.AlchemyProvider(process.env.REACT_APP_ALCHEMY_PROVIDER_NETWORK, process.env.REACT_APP_ALCHEMY_PROVIDER_API_KEY);
-    }
 
     const toastError = (err) => {
         let errMessage = "An error occurred";
