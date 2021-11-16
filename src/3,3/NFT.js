@@ -21,6 +21,9 @@ import * as Constants from '../constants';
 
 
 export const NFT = () => {
+    const url = new URL(window.location);
+    const tokenFromPath = url.pathname.substring(url.pathname.lastIndexOf('/')+1)
+
     const [sklimaBalance, setSklimaBalance] = useState('--.---');
     const [lastUpdate, setLastUpdate] = useState();
     const [rebaseBlock, setRebaseBlock] = useState(0);
@@ -30,12 +33,11 @@ export const NFT = () => {
     const [nftOwnerAddress, setNftOwnerAddress] = useState("");
     const [nftMetadata, setNftMetadata] = useState();
     const [browserIsVisible, setBrowserIsVisible] = useState(true);
-    const [tokenId, setTokenId] = useState();
+    const [tokenId, ] = useState(tokenFromPath);
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
     const imgWidth = isLargerThan800 ? "1024px" : "100%";
-
 
     useInterval(() => {
         epochUpdate();
@@ -47,7 +49,7 @@ export const NFT = () => {
         }
     }, 1000);
 
-    const updateSklimaBalance = (owner) => {
+    const updateSklimaBalance = useCallback((owner) => {
         const sklimaContract = getSklimaContract();
         sklimaContract.balanceOf(owner).then(async (res) => {
             console.log("got balance", res);
@@ -58,19 +60,14 @@ export const NFT = () => {
         }).catch((err) => {
             toastError(toast, err);
         });
-    }
+    }, [toast]);
 
-    const fetchNFTData = async () => {
+    const fetchNFTData = useCallback(async () => {
         if(nftMetadata !== undefined) {
             return;
         }
 
         try {
-            const url = new URL(window.location);
-            const tokenFromPath = url.pathname.substring(url.pathname.lastIndexOf('/')+1)
-            const tokenId = tokenFromPath;
-            setTokenId(tokenFromPath);
-
             const contract = getKlimaGardenContract();
             contract.ownerOf(tokenId).then((owner) => {
                 setNftOwnerAddress(owner);
@@ -92,9 +89,9 @@ export const NFT = () => {
             console.log(err.args)
             toastError(toast, err);
         }
-    }
+    }, [nftMetadata, setNftMetadata, tokenId, toast, updateSklimaBalance]);
 
-    const epochUpdate = async () => {
+    const epochUpdate = useCallback(async () => {
         console.log("browserIsVisible", browserIsVisible);
         if(!browserIsVisible) {
             return;
@@ -134,9 +131,9 @@ export const NFT = () => {
         }
 
         setIsUpdating(false);
-    }
+    },[browserIsVisible, setIsUpdating, setLastUpdate, nftOwnerAddress, rebaseBlock, updateSklimaBalance]);
 
-    useEffect(() => {
+    useEffect(() => { 
 
         if(lastUpdate < (Date.now() - 60000)) {
             epochUpdate();
