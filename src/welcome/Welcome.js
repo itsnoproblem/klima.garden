@@ -2,7 +2,7 @@ import {
     Badge,
     Box,
     Button,
-    Image,
+    Image, Link,
     Popover,
     PopoverArrow,
     PopoverBody,
@@ -86,15 +86,22 @@ export const Welcome = () => {
                     await nftTxn.wait();
 
                     const explorerUrl = Constants.networks[Constants.CHAIN_ID].blockExplorerUrls[0];
-                    console.log(`Mined, see transaction: ${explorerUrl}/tx/${nftTxn.hash}`);
-                    setMintStatus("Success!");
+                    const msg = (<Box>Transaction was mined, your NFT is being prepared.  See transaction <Link href={`${explorerUrl}/tx/${nftTxn.hash}`}>here</Link></Box>);
+                    toast({
+                        title: "Success",
+                        description: msg,
+                        status: "success",
+                        duration: 9000,
+                        isClosable: true,
+                    });
+                    setMintStatus("Success! Your plot is being prepared...");
                 }
                 catch(err) {
                     window.fathom.trackGoal('7DCJM3MX', 0);
                     toastError(err);
                 }
 
-                setIsMinting(false);
+                // setIsMinting(false);
 
             } else {
                 console.log("Ethereum object doesn't exist!");
@@ -127,7 +134,7 @@ export const Welcome = () => {
                     Garden</Text> plot
                 </Box>
                 {currentAccount === "" ? (
-                    <ConnectButton account={currentAccount} setAccount={setCurrentAccount}/>
+                    <ConnectButton account={currentAccount} setAccount={setCurrentAccount} setIsMinting={setIsMinting}/>
                 ) : (
                     <>
                         {isMinting ? (

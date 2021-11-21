@@ -104,6 +104,10 @@ export default function ConnectButton(props) {
 
         window.fathom.trackGoal('K6IQJL9J', 0.33);
 
+        if(props.setIsMinting !== undefined) {
+            props.setIsMinting(false);
+        }
+
         const url = Constants.OPENSEA_URL + `/${Constants.KLIMAGARDEN_CONTRACT_ADDRESS}/${tokenId.toNumber()}`
         if(!toast.isActive(tokenId.toNumber())) {
             toast({
