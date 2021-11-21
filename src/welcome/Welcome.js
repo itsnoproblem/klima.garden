@@ -217,7 +217,7 @@ export const Welcome = () => {
                                 </PopoverContent>
                             </Popover>
                             <Box mt={4}>
-                                <MenuLink Href={"/3,3/gallery/1"} value={(<b>gallery</b>)} color={"blue.500"} hoverColor={"purple.500"}/>
+                                <MenuLink Href={"/3,3/gallery/1"} value={(<b>preview plots</b>)} color={"blue.500"} hoverColor={"purple.500"}/>
                             </Box>
                         </Box>
                     </>
