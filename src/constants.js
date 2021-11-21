@@ -1,5 +1,7 @@
 // Constants
-export const KLIMAGARDEN_CONTRACT_ADDRESS = "0xd12d6Dacdc60cDA107157AB1BD35acE33b9c10A4";
+
+export const KLIMAGARDEN_CONTRACT_ADDRESS = "0x7C536752c97C7b398f8cA39E8c1155e1D1E5085B";
+//export const KLIMAGARDEN_CONTRACT_ADDRESS = "0xd12d6Dacdc60cDA107157AB1BD35acE33b9c10A4";
 // export const KLIMAGARDEN_CONTRACT_ADDRESS = "mainnet-address-here";
 
 // export const CHAIN_ID = 137; // polygon mainnet

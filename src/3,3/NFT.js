@@ -245,7 +245,7 @@ export const NFT = () => {
                                         <Icon as={GiSailboat} w={5} h={5} marginLeft={2}/>
                                     </Link>
                                     <Link ml={4} color="green.700" href={process.env.REACT_APP_EXPLORER_URL + "/address/" + nftOwnerAddress}  target="_blank">
-                                        {nftOwnerAddress.substring(0, 5)+"..."+nftOwnerAddress.substring(-4, 4)}
+                                        {nftOwnerAddress.substring(0, 5)+"..."+nftOwnerAddress.substring(nftOwnerAddress.length - 4, nftOwnerAddress.length)}
                                         <ExternalLinkIcon marginLeft={2}/>
                                     </Link>
                                 </code>

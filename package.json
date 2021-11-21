@@ -70,5 +70,8 @@
       "IPFS_GATEWAY_URL",
       "CHAIN_ID"
     ]
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.1031.0"
   }
 }
