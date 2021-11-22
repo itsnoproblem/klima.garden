@@ -25,7 +25,7 @@ export const toastError = (toast, err) => {
 }
 
 export const secondsUntilBlock = async (block)  => {
-    const url = `https://api.polygonscan.com/api?module=block&action=getblockcountdown&blockno=${block}&apikey=${process.env.REACT_APP_POLYGONSCAN_API_KEY}`;
+    const url = `https://klima.garden/api?module=block&action=getblockcountdown&blockno=${block}&apikey=${process.env.REACT_APP_POLYGONSCAN_API_KEY}`;
     const result = await fetch(url);
     const response = await result.json();
     console.log("scan response", response);
@@ -39,25 +39,27 @@ export const removeAllChildNodes = (parent) => {
 }
 
 let alchemyProvider;
-export const ethersProvider = () => {
-    if(alchemyProvider === undefined) {
-        alchemyProvider = new ethers.providers.AlchemyProvider(process.env.REACT_APP_ALCHEMY_PROVIDER_NETWORK, process.env.REACT_APP_ALCHEMY_PROVIDER_API_KEY);
-    }
-    return  alchemyProvider;
+export const polygonMainnetProvider = () => {
+    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_POCKET_PROVIDER_POLYGON_MAINNET_URL, "matic");
+    return  provider;
+}
+
+export const polygonMumbaiProvider = () => {
+    return new ethers.providers.JsonRpcProvider(process.env.REACT_APP_MUMBAI_PROVIDER_URL);
 }
 
 export const getSklimaContract = () => {
-    const provider = ethersProvider();
+    const provider = polygonMainnetProvider();
     return new ethers.Contract(Constants.SKLIMA_CONTRACT_ADDRESS, Constants.SKLIMA_ABI, provider);
 }
 
 export const getKlimaStakingContract = () => {
-    const provider = ethersProvider();
+    const provider = polygonMainnetProvider();
     return new ethers.Contract(Constants.KLIMA_STAKING_CONTRACT_ADDRESS, Constants.KLIMA_STAKING_ABI, provider);
 }
 
 export const getKlimaGardenContract =() => {
-    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_MUMBAI_PROVIDER_URL);
+    const provider = polygonMumbaiProvider();
     return new ethers.Contract(Constants.KLIMAGARDEN_CONTRACT_ADDRESS, KlimaGardenNFT.abi, provider);
 }
 
@@ -66,10 +68,10 @@ export const getSvg = () => {
 }
 
 export const convertHMS = (value) => {
-    const sec = parseInt(value, 10); // convert value to number if it's string
-    let hours   = Math.floor(sec / 3600); // get hours
-    let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
-    let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
+    const sec = parseInt(value, 10);
+    let hours   = Math.floor(sec / 3600);
+    let minutes = Math.floor((sec - (hours * 3600)) / 60);
+    let seconds = sec - (hours * 3600) - (minutes * 60); 
     hours = (hours > 0) ? (hours < 2) ? `${hours}h ` : `${hours}h ` : '';
     minutes = (minutes > 0) ? `${minutes}m ` : '';
     return hours + minutes + seconds + 's';
