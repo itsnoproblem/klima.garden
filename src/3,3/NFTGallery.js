@@ -12,6 +12,7 @@ import {
     removeAllChildNodes,
     secondsUntilBlock,
     toastError,
+    preloadNFTMedia,
 } from "./nftutils";
 import {MenuLink} from "../MenuLink";
 import * as Constants from '../constants';

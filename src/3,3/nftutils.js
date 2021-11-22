@@ -71,7 +71,7 @@ export const convertHMS = (value) => {
     const sec = parseInt(value, 10);
     let hours   = Math.floor(sec / 3600);
     let minutes = Math.floor((sec - (hours * 3600)) / 60);
-    let seconds = sec - (hours * 3600) - (minutes * 60); 
+    let seconds = sec - (hours * 3600) - (minutes * 60);
     hours = (hours > 0) ? (hours < 2) ? `${hours}h ` : `${hours}h ` : '';
     minutes = (minutes > 0) ? `${minutes}m ` : '';
     return hours + minutes + seconds + 's';
@@ -79,10 +79,12 @@ export const convertHMS = (value) => {
 
 export const preloadNFTMedia = () => {
     let img1 = document.createElement("img");
-    let vid1 = document.createElement("video")
-    let vid2 = document.createElement("video")
-    img1.src = "https://gateway.pinata.cloudQmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"
-    vid1.src = "https://gateway.pinata.cloudQmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG"
-    vid2.src = "https://gateway.pinata.cloudQmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG";
+    let vid1 = document.createElement("video");
+    let vid2 = document.createElement("video");
+    let vid3 = document.createElement("video");
+    img1.src = process.env.REACT_APP_IPFS_GATEWAY_URL + "/QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG";
+    vid1.src = process.env.REACT_APP_IPFS_GATEWAY_URL + "/QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG";
+    vid2.src = process.env.REACT_APP_IPFS_GATEWAY_URL + "/QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG";
+    vid3.src = process.env.REACT_APP_IPFS_GATEWAY_URL + "QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ";
 }
 
