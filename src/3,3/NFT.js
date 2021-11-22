@@ -77,8 +77,6 @@ export const NFT = () => {
             contract.tokenURI(tokenId).then((uri) => {
                 const metadata = JSON.parse(atob(uri.replace("data:application/json;base64,", "")));
                 metadata.imgUrl = metadata.image?.replace('ipfs://', process.env.REACT_APP_IPFS_GATEWAY_URL)
-                // metadata.image = 'ipfs://QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF';
-                // metadata.image = 'ipfs://QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9';
                 setNftMetadata(metadata);
                 console.log("tokenURI", metadata);
             });

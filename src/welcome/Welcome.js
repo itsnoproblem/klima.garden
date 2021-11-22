@@ -99,12 +99,14 @@ export const Welcome = () => {
                 catch(err) {
                     window.fathom.trackGoal('7DCJM3MX', 0);
                     toastError(err);
+                    setIsMinting(false);
                 }
 
                 // setIsMinting(false);
 
             } else {
                 console.log("Ethereum object doesn't exist!");
+                setIsMinting(false);
             }
         } catch (err) {
             setMintStatus("error: " + err);
