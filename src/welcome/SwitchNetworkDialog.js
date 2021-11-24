@@ -23,7 +23,7 @@ const SwitchNetworkDialog = () => {
 
     const [isMetamask, setIsMetamask] = useState();
     const [isOpen, setIsOpen] = useState(false)
-    const cancelRef = useRef();
+    const switchNetworkRef = useRef();
     const toast = useToast();
     const { ethereum } = window;
     if (!ethereum) {
@@ -131,7 +131,7 @@ const SwitchNetworkDialog = () => {
             </Modal>
             <AlertDialog
                 isOpen={isOpen}
-                leastDestructiveRef={cancelRef}
+                leastDestructiveRef={switchNetworkRef}
                 onClose={() => {}}
             >
                 <AlertDialogOverlay>
@@ -142,11 +142,11 @@ const SwitchNetworkDialog = () => {
 
                         <AlertDialogBody>
                             You need to connect to the Polygon network to use Klima Garden.
-                            You can <Link color="yellow.400" href={"/3,3/gallery/1"}>preview available plots here</Link>.
+                            You can <Link borderWidth={0} borderBottom={"1px dotted"} href={"/3,3/gallery/1"}>preview available plots here</Link>.
                         </AlertDialogBody>
 
                         <AlertDialogFooter>
-                            <Button colorScheme="green" onClick={switchNetworks}>
+                            <Button colorScheme="green" ref={switchNetworkRef} onClick={switchNetworks}>
                                 Switch Networks
                             </Button>
                         </AlertDialogFooter>
