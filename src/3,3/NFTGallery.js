@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
-import {Box, HStack, IconButton, Link, Progress, SimpleGrid, Stack, useMediaQuery, useToast} from "@chakra-ui/react";
-import {ChevronLeftIcon, ExternalLinkIcon, Icon} from "@chakra-ui/icons";
+import {Box, HStack, Link, Progress, SimpleGrid, Stack, useMediaQuery, useToast} from "@chakra-ui/react";
+import {ChevronLeftIcon, CloseIcon, ExternalLinkIcon, HamburgerIcon, Icon} from "@chakra-ui/icons";
 import {FaFileImage} from "react-icons/fa";
 import {GiSailboat} from "react-icons/gi";
 import {BlueRidgeLoFi} from "./BlueRidgeLoFi";
@@ -12,7 +12,6 @@ import {
     removeAllChildNodes,
     secondsUntilBlock,
     toastError,
-    preloadNFTMedia,
 } from "./nftutils";
 import {MenuLink} from "../MenuLink";
 import * as Constants from '../constants';
@@ -145,7 +144,7 @@ export const NFTGallery = () => {
         setIsUpdating(true);
         setLastUpdate(updateTime);
 
-        const EPOCH_SECONDS = 8 * 60 * 60;
+        const EPOCH_SECONDS = 7.2 * 60 * 60;
         const rebaseInfo = await getKlimaStakingContract().epoch();
         console.log("ebaseInfo",
             rebaseInfo[0].toNumber(),
@@ -204,6 +203,7 @@ export const NFTGallery = () => {
 
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
     const imgWidth = isLargerThan800 ? "1024px" : "100%";
+    const [isOpen, setIsOpen] = useState(false);
 
     const getNftAttribute = (name) => {
         let attr;
@@ -224,128 +224,134 @@ export const NFTGallery = () => {
         }
     }
 
+    const MenuToggle = ({ toggle, isOpen }) => {
+        return (
+            <Box display={{ base: "block", md: "none" }} onClick={toggle}>
+                {isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            </Box>
+        )
+    }
+
+    const toggle = () => setIsOpen(!isOpen);
+
+
     return (
         <PageVisibility onChange={handleVisibilityChange}>
             <>
-            <Box mb={3} color="gray.600" textAlign="left" width={"100vw"}>
-
-                <Stack
-                    ml={[0, 4]}
-                    spacing={8}
-                    align="center"
-                    justify={["center", "space-between", "flex-start", "flex-start"]}
-                    direction={["row", "row", "row", "row"]}
-                    pt={[4, 4, 0, 0]}
+                <HStack alignSelf={"flex-start"} position={["absolute", "static"]} top={3} mt={3} ml={5}>
+                    <ChevronLeftIcon onClick={() => {window.location="/"}} cursor={"pointer"} size={"2xl"}/>
+                    <MenuToggle toggle={toggle} isOpen={isOpen}/>
+                </HStack>
+                <Box
+                    mb={3}
+                    color="gray.600"
+                    textAlign="left"
+                    width={"100vw"}
+                    display={{ base: isOpen ? "block" : "none", md: "block" }}
+                    flexBasis={{ base: "100%", md: "auto" }}
                 >
-                    <Box>
-                        <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>
-                    </Box>
-                    <MenuLink isSelected={variant === "1"} Href="/3,3/gallery/1" value="common"/>
-                    <MenuLink isSelected={variant === "2"} Href="/3,3/gallery/2" value="rare"/>
-                    <MenuLink isSelected={variant === "3"} Href="/3,3/gallery/3" value="ultra rare"/>
-                    <MenuLink isSelected={variant === "4"} Href="/3,3/gallery/4" value="one-of-a-kind"/>
-                </Stack>
-                {/*<SimpleGrid columns={2} top={3} width={"100%"}>*/}
-                {/*    <Box>*/}
-                {/*        <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>*/}
-                {/*    </Box>*/}
-                {/*    <Box>*/}
-                {/*        <Tabs>*/}
-                {/*            <TabList>*/}
-                {/*                <Tab>One</Tab>*/}
-                {/*                <Tab>Two</Tab>*/}
-                {/*                <Tab>Three</Tab>*/}
-                {/*            </TabList>*/}
-                {/*        </Tabs>*/}
-                {/*    </Box>*/}
-                {/*</SimpleGrid>*/}
-            </Box>
-            <Box w={["100vw", "inherit"]}>
-                <Box borderColor="gray.50" borderWidth="14px" m={0}>
-                    {/* **************** */}
-                    {/* blue ridge lo-fi */}
-                    {/* **************** */}
-                    {(nftMetadata?.image === "ipfs://QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG") && (
-                        <BlueRidgeLoFi width={imgWidth} name={nftMetadata?.name} onLoad={epochUpdate}/>
-                    )}
-
-                    {/* *********** */}
-                    {/* sequestered */}
-                    {/* *********** */}
-                    {(nftMetadata?.image === "ipfs://QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF") && (
-                        <video width={1024} autoPlay loop>
-                            <source src="https://gateway.pinata.cloud/ipfs/QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF" type="video/mp4"/>
-                            Your browser does not support the video tag.
-                        </video>
-                    )}
-
-                    {/* *********** */}
-                    {/* tree tree   */}
-                    {/* *********** */}
-                    {(nftMetadata?.image === "ipfs://QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9") && (
-                        <video width={1024} autoPlay loop>
-                            <source src="https://gateway.pinata.cloud/ipfs/QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9" type="video/mp4"/>
-                            Your browser does not support the video tag.
-                        </video>
-                    )}
-
-                    {/* *********** */}
-                    {/* not found   */}
-                    {/* *********** */}
-                    {(nftMetadata?.image === "ipfs://QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ") && (
-                        <video width={1024} autoPlay loop>
-                            <source src="https://gateway.pinata.cloud/ipfs/QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ" type="video/mp4"/>
-                            Your browser does not support the video tag.
-                        </video>
-                    )}
-
-
-                    <SimpleGrid columns={[1,2]} w="100%" fontSize="sm" backgroundColor="gray.50" paddingTop="14px" color={"green.700"}>
-                        <Box>
-                            <SimpleGrid columns={[1,2]}>
-                                <Box alignItems={"bottom"}><Progress mt={1} mr={4} isIndeterminate={false} size="md" min={0} max={100} value={percentageComplete} backgroundColor={"gray.200"}/></Box>
-                                <Box align="left">
-                                    <code>rebase in {convertHMS(secUntilRebase)}</code>
-                                </Box>
-                            </SimpleGrid>
-                        </Box>
-                        <Box textAlign={{base: "left", lg: "right"}}>
-                            epoch {epochNumber}
-                        </Box>
-
-                        <Box align={"left"}>Balance: {sklimaBalance} sKLIMA</Box>
-                        <Box textAlign={["left", "right"]}>
-                            Minted with {getNftAttribute('Minted with sKLIMA')} sKLIMA
-                        </Box>
-
-                        <Box textAlign="left">
-                            <HStack>
-                                <code>
-                                    <Link
-                                        color="green.700"
-                                        target="_blank"
-                                        href={Constants.OPENSEA_URL + "/assets/" + Constants.KLIMAGARDEN_CONTRACT_ADDRESS + "/" + tokenId}
-                                    >
-                                        OpenSea
-                                        <Icon as={GiSailboat} w={5} h={5} marginLeft={2}/>
-                                    </Link>
-                                    <Link ml={4} color="green.700" href={process.env.REACT_APP_EXPLORER_URL + "/address/" + nftOwnerAddress}  target="_blank">
-                                        {nftOwnerAddress.substring(0, 5)+"...0000"}
-                                        <ExternalLinkIcon marginLeft={2}/>
-                                    </Link>
-                                </code>
-                            </HStack>
-
-                        </Box>
-                        <Box textAlign={["left", "right"]}>
-                            <Link color="green.700" href={nftMetadata?.imgUrl} target="_blank" cursor="pointer" alignSelf={"end"}>
-                                {nftMetadata?.name} ({getNftAttribute("rarity")})
-                                <Icon as={FaFileImage} marginLeft={2}/>
-                            </Link>
-                        </Box>
-                    </SimpleGrid>
+                    <Stack
+                        m={[0, 4]}
+                        spacing={[8, 8, 8, 32]}
+                        align="center"
+                        w={"100%"}
+                        justify={["center", "space-between", "flex-start", "center"]}
+                        direction={["column", "row", "row", "row"]}
+                        pt={[4, 4, 0, 0]}
+                    >
+                        <MenuLink isSelected={variant === "1"} Href="/3,3/gallery/1" value="common"/>
+                        <MenuLink isSelected={variant === "2"} Href="/3,3/gallery/2" value="rare"/>
+                        <MenuLink isSelected={variant === "3"} Href="/3,3/gallery/3" value="ultra rare"/>
+                        <MenuLink isSelected={variant === "4"} Href="/3,3/gallery/4" value="one-of-a-kind"/>
+                    </Stack>
                 </Box>
-            </Box>
+
+                <Box w={["100vw", "inherit"]}>
+                    <Box borderColor="gray.50" borderWidth="14px" m={0}>
+                        {/* **************** */}
+                        {/* blue ridge lo-fi */}
+                        {/* **************** */}
+                        {(nftMetadata?.image === "ipfs://QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG") && (
+                            <BlueRidgeLoFi width={imgWidth} name={nftMetadata?.name} onLoad={epochUpdate}/>
+                        )}
+
+                        {/* *********** */}
+                        {/* sequestered */}
+                        {/* *********** */}
+                        {(nftMetadata?.image === "ipfs://QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF") && (
+                            <video width={1024} autoPlay loop>
+                                <source src="https://gateway.pinata.cloud/ipfs/QmU3jXcdu8jGbfdRLuU2hPDLMK93hiH8aPx1MPobaSosfF" type="video/mp4"/>
+                                Your browser does not support the video tag.
+                            </video>
+                        )}
+
+                        {/* *********** */}
+                        {/* tree tree   */}
+                        {/* *********** */}
+                        {(nftMetadata?.image === "ipfs://QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9") && (
+                            <video width={1024} autoPlay loop>
+                                <source src="https://gateway.pinata.cloud/ipfs/QmSmb8rvwNpPAbqa7Wipr3oeBHYjTsqS236pAyWw4rhup9" type="video/mp4"/>
+                                Your browser does not support the video tag.
+                            </video>
+                        )}
+
+                        {/* *********** */}
+                        {/* not found   */}
+                        {/* *********** */}
+                        {(nftMetadata?.image === "ipfs://QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ") && (
+                            <video width={1024} autoPlay loop>
+                                <source src="https://gateway.pinata.cloud/ipfs/QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ" type="video/mp4"/>
+                                Your browser does not support the video tag.
+                            </video>
+                        )}
+
+
+                        <SimpleGrid columns={[1,2]} w="100%" fontSize="sm" backgroundColor="gray.50" paddingTop="14px" color={"green.700"}>
+                            <Box>
+                                <SimpleGrid columns={[1,2]}>
+                                    <Box alignItems={"bottom"}><Progress mt={1} mr={4} isIndeterminate={false} size="md" min={0} max={100} value={percentageComplete} backgroundColor={"gray.200"}/></Box>
+                                    <Box align="left">
+                                        <code>rebase in {convertHMS(secUntilRebase)}</code>
+                                    </Box>
+                                </SimpleGrid>
+                            </Box>
+                            <Box textAlign={{base: "left", lg: "right"}}>
+                                epoch {epochNumber}
+                            </Box>
+
+                            <Box align={"left"}>Balance: {sklimaBalance} sKLIMA</Box>
+                            <Box textAlign={["left", "right"]}>
+                                Minted with {getNftAttribute('Minted with sKLIMA')} sKLIMA
+                            </Box>
+
+                            <Box textAlign="left">
+                                <HStack>
+                                    <code>
+                                        <Link
+                                            color="green.700"
+                                            target="_blank"
+                                            href={Constants.OPENSEA_URL + "/assets/" + Constants.KLIMAGARDEN_CONTRACT_ADDRESS + "/" + tokenId}
+                                        >
+                                            OpenSea
+                                            <Icon as={GiSailboat} w={5} h={5} marginLeft={2}/>
+                                        </Link>
+                                        <Link ml={4} color="green.700" href={process.env.REACT_APP_EXPLORER_URL + "/address/" + nftOwnerAddress}  target="_blank">
+                                            {nftOwnerAddress.substring(0, 5)+"...0000"}
+                                            <ExternalLinkIcon marginLeft={2}/>
+                                        </Link>
+                                    </code>
+                                </HStack>
+
+                            </Box>
+                            <Box textAlign={["left", "right"]}>
+                                <Link color="green.700" href={nftMetadata?.imgUrl} target="_blank" cursor="pointer" alignSelf={"end"}>
+                                    {nftMetadata?.name} ({getNftAttribute("rarity")})
+                                    <Icon as={FaFileImage} marginLeft={2}/>
+                                </Link>
+                            </Box>
+                        </SimpleGrid>
+                    </Box>
+                </Box>
             </>
         </PageVisibility>
     );

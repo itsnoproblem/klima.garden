@@ -2,7 +2,9 @@ import {
     Badge,
     Box,
     Button,
-    Image, Link,
+    HStack,
+    Image,
+    Link,
     Popover,
     PopoverArrow,
     PopoverBody,
@@ -26,7 +28,7 @@ import KlimaGardenNFT from '../utils/KlimaGardenNFT.json';
 import ConnectButton from "./ConnectButton";
 import SwitchNetworkDialog from "./SwitchNetworkDialog";
 import * as Constants from "../constants";
-import {MenuLink} from "../MenuLink";
+import WelcomeMenu from "./WelcomeMenu";
 
 export const Welcome = () => {
     const [currentAccount, setCurrentAccount] = useState("");
@@ -65,28 +67,24 @@ export const Welcome = () => {
                 setIsMinting(true);
                 setMintStatus("awaiting user confirmation...")
                 console.log("About to mint with BALANCE", sklimaBalance);
-                console.log("bnBalance", sklimaBalanceRaw);
+                console.log("BN Balance", sklimaBalanceRaw);
 
                 const provider = new ethers.providers.Web3Provider(ethereum);
                 const signer = provider.getSigner();
                 const connectedContract = new ethers.Contract(Constants.KLIMAGARDEN_CONTRACT_ADDRESS, KlimaGardenNFT.abi, signer);
-                const addr = await signer.getAddress();
 
                 window.fathom.trackGoal('OMD4FKVL', 0);
 
                 try {
-                    console.log("Going to pop wallet now to pay gas...")
                     setMintStatus("please wait...");
                     let nftTxn = await connectedContract.makeNFT(sklimaBalanceRaw);
-                    console.log("Mining...please wait.")
                     setMintStatus("confirming...");
-
                     window.fathom.trackGoal('SX2IES2N', 0);
-
                     await nftTxn.wait();
 
                     const explorerUrl = Constants.networks[Constants.CHAIN_ID].blockExplorerUrls[0];
                     const msg = (<Box>Transaction was mined, your NFT is being prepared.  See transaction <Link href={`${explorerUrl}/tx/${nftTxn.hash}`}>here</Link></Box>);
+
                     toast({
                         title: "Success",
                         description: msg,
@@ -94,20 +92,21 @@ export const Welcome = () => {
                         duration: 9000,
                         isClosable: true,
                     });
+
                     setMintStatus("Success! Your plot is being prepared...");
                 }
+
                 catch(err) {
                     window.fathom.trackGoal('7DCJM3MX', 0);
                     toastError(err);
                     setIsMinting(false);
                 }
 
-                // setIsMinting(false);
-
             } else {
                 console.log("Ethereum object doesn't exist!");
                 setIsMinting(false);
             }
+
         } catch (err) {
             setMintStatus("error: " + err);
             setIsMinting(false);
@@ -122,9 +121,9 @@ export const Welcome = () => {
     return(
         <>
             <SwitchNetworkDialog/>
+            <WelcomeMenu/>
             <Box minH={"100vh"} minW={"100vw"} bg={"blue.200"} textAlign={"center"}>
-                {/*<WelcomeMenu/>*/}
-                <Image src={"/klima-garden.gif"} margin={"auto"} mt={["5", "16"]}/>
+                <Image src={"/klima-garden.gif"} margin={"auto"} mt={["10", "20"]}/>
                 <Box textShadow={"1px 1px #381200"}
                       color={"#83c305"}
                       fontSize={["xl", "3xl"]}
@@ -145,7 +144,7 @@ export const Welcome = () => {
                                 <Text fontSize="md" textShadow={"1px 1px #333"} fontFamily={'"Press Start 2P", monospace'} color="gray.100">{mintStatus}</Text>
                             </VStack>
                         ) : (
-                            <>
+                            <HStack mb={8} ml={"auto"} mr={"auto"} d={"inline-flex"}>
                                 <Button  mt={6}
                                          mb={6}
                                          fontFamily='"Press Start 2P", monospace'
@@ -159,69 +158,54 @@ export const Welcome = () => {
                                          className="cta-button connect-wallet-button">
                                     Mint
                                 </Button>
-                            </>
+                                <Box>
+                                    <Popover colorScheme={"blue"}>
+                                        <PopoverTrigger>
+                                            <Badge
+                                                backgroundColor={"blue.500"}
+                                                color={"gray.200"}
+                                                cursor={"pointer"}
+                                                fontFamily={"Sans-Serif"}
+                                                _hover={{backgroundColor: "blue.600"}}
+                                            >Details</Badge>
+                                        </PopoverTrigger>
+                                        <PopoverContent backgroundColor={"gray.50"}>
+                                            <PopoverArrow />
+                                            <PopoverCloseButton color={"gray.600"}/>
+                                            <PopoverBody>
+                                                <Table color="gray.600" variant={"simple"} size={"sm"}>
+                                                    <Thead>
+                                                        <Tr>
+                                                            <Th>type</Th>
+                                                            <Th>quantity</Th>
+                                                        </Tr>
+                                                    </Thead>
+                                                    <Tbody>
+                                                        <Tr>
+                                                            <Td><Link href={"/3,3/gallery/4"}>one-of-a-kind</Link></Td>
+                                                            <Td>1</Td>
+                                                        </Tr>
+                                                        <Tr>
+                                                            <Td><Link href={"/3,3/gallery/3"}>ultra rare</Link></Td>
+                                                            <Td>33</Td>
+                                                        </Tr>
+                                                        <Tr>
+                                                            <Td><Link href={"/3,3/gallery/2"}>rare</Link></Td>
+                                                            <Td>323</Td>
+                                                        </Tr>
+                                                        <Tr>
+                                                            <Td><Link href={"/3,3/gallery/1"}>common</Link></Td>
+                                                            <Td>1,000</Td>
+                                                        </Tr>
+                                                    </Tbody>
+                                                </Table>
+                                            </PopoverBody>
+                                        </PopoverContent>
+                                    </Popover>
+                                </Box>
+                            </HStack>
                         )}
 
-                        <Box
-                            fontFamily={"Roboto Mono"}
-                            color={"blue.500"}
-                            fontSize={["md", "lg"]}
-                            textShadow={"2px 1px #ccc"}
-                            fontWeight={"bold"}
-                            lineHeight={"1.5em"}
-                            mb={4}
-                        >
-                            <Text>Mint for 0.033 ETH</Text>
-                            <Text>Plot assignments are random</Text>
-                        </Box>
-                        <Box>
-                            <Popover colorScheme={"blue"}>
-                                <PopoverTrigger>
-                                    <Badge
-                                        backgroundColor={"blue.500"}
-                                        color={"gray.200"}
-                                        cursor={"pointer"}
-                                        fontFamily={"Sans-Serif"}
-                                        _hover={{backgroundColor: "blue.600"}}
-                                    >Details</Badge>
-                                </PopoverTrigger>
-                                <PopoverContent backgroundColor={"gray.50"}>
-                                    <PopoverArrow />
-                                    <PopoverCloseButton color={"gray.600"}/>
-                                    <PopoverBody>
-                                        <Table color="gray.600" variant={"simple"} size={"sm"}>
-                                            <Thead>
-                                                <Tr>
-                                                    <Th>type</Th>
-                                                    <Th>quantity</Th>
-                                                </Tr>
-                                            </Thead>
-                                            <Tbody>
-                                                <Tr>
-                                                    <Td>one-of-a-kind</Td>
-                                                    <Td>1</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>ultra rare</Td>
-                                                    <Td>33</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>rare</Td>
-                                                    <Td>323</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>common</Td>
-                                                    <Td>1,000</Td>
-                                                </Tr>
-                                            </Tbody>
-                                        </Table>
-                                    </PopoverBody>
-                                </PopoverContent>
-                            </Popover>
-                            <Box mt={4}>
-                                <MenuLink Href={"/3,3/gallery/1"} value={(<b>preview plots</b>)} color={"blue.500"} hoverColor={"purple.500"}/>
-                            </Box>
-                        </Box>
                     </>
                 )}
             </Box>

@@ -38,7 +38,6 @@ export const removeAllChildNodes = (parent) => {
     }
 }
 
-let alchemyProvider;
 export const polygonMainnetProvider = () => {
     const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_POCKET_PROVIDER_POLYGON_MAINNET_URL, "matic");
     return  provider;

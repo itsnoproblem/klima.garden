@@ -6,6 +6,7 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import {NFTGallery} from "./3,3/NFTGallery";
 import {preloadNFTMedia} from "./3,3/nftutils";
 import {useEffect} from "react";
+import FaqPage from "./faq/FaqPage";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
             <Switch>
               <Route exact path='/3,3/:tokenId' component={NFT} />
               <Route exact path='/3,3/gallery/:variant' component={NFTGallery} />
+              <Route exact path='/faq' component={FaqPage} />
               <Route component={Welcome}/>
             </Switch>
           </Router>

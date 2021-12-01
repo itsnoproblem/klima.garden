@@ -100,7 +100,7 @@ export const NFT = () => {
         setIsUpdating(true);
         setLastUpdate(updateTime);
 
-        const EPOCH_SECONDS = 8 * 60 * 60;
+        const EPOCH_SECONDS = 7.2 * 60 * 60;
         const rebaseInfo = await getKlimaStakingContract().epoch();
         console.log("ebaseInfo",
             rebaseInfo[0].toNumber(),
