@@ -4,9 +4,8 @@ import {
     AccordionIcon,
     AccordionItem,
     AccordionPanel,
-    Box, Flex, HStack,
+    Box, Flex,
     Link,
-    textDecoration
 } from "@chakra-ui/react"
 import WelcomeMenu from "../welcome/WelcomeMenu";
 import {ExternalLinkIcon, LinkIcon} from "@chakra-ui/icons";
@@ -90,7 +89,7 @@ const FaqPage = () => {
                                                 <Box mr={5}>
                                                     <Link href={link.url}
                                                           fontSize={"md"}
-                                                          target={link.isInternal ? "_self" : "_blank"}
+                                                          target={link.isInternal ? "_self" : "_blank"}Ø
                                                           _hover={{
                                                               textDecoration: "none",
                                                               color: "yellow.600"
