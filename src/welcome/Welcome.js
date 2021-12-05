@@ -144,7 +144,8 @@ export const Welcome = () => {
                                 <Text fontSize="md" textShadow={"1px 1px #333"} fontFamily={'"Press Start 2P", monospace'} color="gray.100">{mintStatus}</Text>
                             </VStack>
                         ) : (
-                            <HStack mb={8} ml={"auto"} mr={"auto"} d={"inline-flex"}>
+                            // <HStack mb={8} ml={"auto"} mr={"auto"} d={"inline-flex"}>
+                            <>
                                 <Button  mt={6}
                                          mb={6}
                                          fontFamily='"Press Start 2P", monospace'
@@ -158,8 +159,8 @@ export const Welcome = () => {
                                          className="cta-button connect-wallet-button">
                                     Mint
                                 </Button>
-                                <Box>
-                                    <Popover colorScheme={"blue"}>
+                                <Box mt={0}>
+                                    <Popover colorScheme={"blue"} placement={"top"}>
                                         <PopoverTrigger>
                                             <Badge
                                                 backgroundColor={"blue.500"}
@@ -199,11 +200,15 @@ export const Welcome = () => {
                                                         </Tr>
                                                     </Tbody>
                                                 </Table>
+                                                <Box margin={4} align={"left"} color={"gray.700"} fontSize={"sm"}>
+                                                    Plots are randomly assigned.
+                                                </Box>
                                             </PopoverBody>
                                         </PopoverContent>
                                     </Popover>
                                 </Box>
-                            </HStack>
+                            </>
+                            // </HStack>
                         )}
 
                     </>
