@@ -76,14 +76,4 @@ export const convertHMS = (value) => {
     return hours + minutes + seconds + 's';
 }
 
-export const preloadNFTMedia = () => {
-    let img1 = document.createElement("img");
-    let vid1 = document.createElement("video");
-    let vid2 = document.createElement("video");
-    let vid3 = document.createElement("video");
-    img1.src = process.env.REACT_APP_IPFS_GATEWAY_URL + "/QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG";
-    vid1.src = process.env.REACT_APP_IPFS_GATEWAY_URL + "/QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG";
-    vid2.src = process.env.REACT_APP_IPFS_GATEWAY_URL + "/QmVEsS6qQvatbArCSNYiJUJAKUi28orDH1dD2LoGUb6vZG";
-    vid3.src = process.env.REACT_APP_IPFS_GATEWAY_URL + "QmbMK726d7sWFS2ThqXUprQ6sSUnZY91kESKZv1S2xmiaQ";
-}
 

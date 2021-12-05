@@ -4,16 +4,9 @@ import {Welcome} from './welcome/Welcome';
 import {ChakraProvider} from "@chakra-ui/react";
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import {NFTGallery} from "./3,3/NFTGallery";
-import {preloadNFTMedia} from "./3,3/nftutils";
-import {useEffect} from "react";
 import FaqPage from "./faq/FaqPage";
 
 function App() {
-
-  useEffect(() => {
-    window.addEventListener("load", preloadNFTMedia);
-  })
-
 
   return (
     <ChakraProvider>
