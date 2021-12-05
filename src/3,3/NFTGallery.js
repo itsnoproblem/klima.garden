@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
-import {Box, HStack, Link, Progress, SimpleGrid, Stack, useMediaQuery, useToast} from "@chakra-ui/react";
-import {ChevronLeftIcon, CloseIcon, ExternalLinkIcon, HamburgerIcon, Icon} from "@chakra-ui/icons";
+import {Box, HStack, Link, Progress, SimpleGrid, Slide, Stack, useMediaQuery, useToast} from "@chakra-ui/react";
+import {ChevronLeftIcon, ExternalLinkIcon, HamburgerIcon, Icon, SmallCloseIcon} from "@chakra-ui/icons";
 import {FaFileImage} from "react-icons/fa";
 import {GiSailboat} from "react-icons/gi";
 import {BlueRidgeLoFi} from "./BlueRidgeLoFi";
@@ -19,6 +19,43 @@ import {useParams} from "react-router-dom";
 import PageVisibility from 'react-page-visibility';
 
 
+const GalleryMenu = (props) => {
+    let isOpen = props.isOpen;
+    let setIsOpen = props.setIsOpen;
+
+    const mobileOnly = ["visible", "visible", "hidden", "hidden"];
+
+    return (
+        <>
+            <Slide in={isOpen} direction={"top"}>
+                <Box
+                    pos={"absolute"}
+                    top={2} right={2}
+                    visibility={mobileOnly}
+                >
+                    <SmallCloseIcon onClick={() => setIsOpen(false)}></SmallCloseIcon>
+                </Box>
+                <Stack
+                    pb={[6, 6, 3, 3]}
+                    spacing={[8, 8, 8, 32]}
+                    align="center"
+                    w={"100%"}
+                    backgroundColor={"purple.400"}
+                    justify={["center", "space-between", "flex-start", "center"]}
+                    direction={["column", "row", "row", "row"]}
+                    pt={[6, 6, 3, 3]}
+                >
+                    <MenuLink isSelected={props.variant === "1"} Href="/3,3/gallery/1" value="common"/>
+                    <MenuLink isSelected={props.variant === "2"} Href="/3,3/gallery/2" value="rare"/>
+                    <MenuLink isSelected={props.variant === "3"} Href="/3,3/gallery/3" value="ultra rare"/>
+                    <MenuLink isSelected={props.variant === "4"} Href="/3,3/gallery/4" value="one-of-a-kind"/>
+                </Stack>
+            </Slide>
+            {/*</Box>*/}
+        </>
+    )
+}
+
 export const NFTGallery = () => {
     const sklimaBalance = "323.00";
     const nftOwnerAddress = "0x0";
@@ -33,6 +70,11 @@ export const NFTGallery = () => {
     const [percentageComplete, setPercentComplete] = useState(0);
     const [isUpdating, setIsUpdating] = useState(false);
     const toast = useToast();
+
+    const [menuIsOpen, setMenuIsOpen] = useState(false);
+    const menuToggle = () => {
+        setMenuIsOpen(!menuIsOpen);
+    }
 
     let nftMetadata;
 
@@ -203,7 +245,6 @@ export const NFTGallery = () => {
 
     const [isLargerThan800] = useMediaQuery("(min-width: 800px)")
     const imgWidth = isLargerThan800 ? "1024px" : "100%";
-    const [isOpen, setIsOpen] = useState(false);
 
     const getNftAttribute = (name) => {
         let attr;
@@ -219,55 +260,33 @@ export const NFTGallery = () => {
     }
 
     const handleVisibilityChange = (visible) => {
+        console.log("visibility change");
         if(visible) {
             epochUpdate();
         }
     }
 
-    const MenuToggle = ({ toggle, isOpen }) => {
-        return (
-            <Box display={{ base: "block", md: "none" }} onClick={toggle}>
-                {isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            </Box>
-        )
-    }
-
-    const toggle = () => setIsOpen(!isOpen);
-
-
     return (
         <PageVisibility onChange={handleVisibilityChange}>
             <>
-                <HStack alignSelf={"flex-start"} position={["absolute", "static"]} top={3} mt={3} ml={5}>
-                    <ChevronLeftIcon onClick={() => {window.location="/"}} cursor={"pointer"} size={"2xl"}/>
-                    <MenuToggle toggle={toggle} isOpen={isOpen}/>
-                </HStack>
-                <Box
-                    mb={3}
-                    color="gray.600"
-                    textAlign="left"
-                    width={"100vw"}
-                    display={{ base: isOpen ? "block" : "none", md: "block" }}
-                    flexBasis={{ base: "100%", md: "auto" }}
-                >
-                    <Stack
-                        m={[0, 4]}
-                        spacing={[8, 8, 8, 32]}
-                        align="center"
-                        w={"100%"}
-                        justify={["center", "space-between", "flex-start", "center"]}
-                        direction={["column", "row", "row", "row"]}
-                        pt={[4, 4, 0, 0]}
-                    >
-                        <MenuLink isSelected={variant === "1"} Href="/3,3/gallery/1" value="common"/>
-                        <MenuLink isSelected={variant === "2"} Href="/3,3/gallery/2" value="rare"/>
-                        <MenuLink isSelected={variant === "3"} Href="/3,3/gallery/3" value="ultra rare"/>
-                        <MenuLink isSelected={variant === "4"} Href="/3,3/gallery/4" value="one-of-a-kind"/>
-                    </Stack>
-                </Box>
-
                 <Box w={["100vw", "inherit"]}>
-                    <Box borderColor="gray.50" borderWidth="14px" m={0}>
+                    <Box pos={"absolute"} top={2} left={2}>
+                        <Link href={"/"}><ChevronLeftIcon/></Link>
+                    </Box>
+                    <Box
+                        pos={"absolute"}
+                        top={2} right={2}
+                        visibility={["visible", "visible", "hidden", "hidden"]}
+                    >
+                        <HamburgerIcon cursor={"pointer"} onClick={() => setMenuIsOpen(true)}/>
+                    </Box>
+                    <Box borderColor="gray.50"
+                         borderWidth="14px"
+                         onMouseOver={() => setMenuIsOpen(true)}
+                         onMouseLeave={() => window.setTimeout(() => setMenuIsOpen(false), 1500)}
+                    >
+                        <GalleryMenu isOpen={menuIsOpen} setIsOpen={setMenuIsOpen} variant={variant}/>
+
                         {/* **************** */}
                         {/* blue ridge lo-fi */}
                         {/* **************** */}
