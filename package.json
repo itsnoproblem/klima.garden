@@ -44,7 +44,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "react-scripts build && ./scripts/deploy.sh",
-    "deploy-contract": "export $(grep -v '^#' .env | xargs) && npx hardhat run scripts/deployContract.js"
+    "deploy-contract": "export $(grep -v '^#' .env | xargs) && npx hardhat run --network mumbai scripts/deployContract.js",
+    "verify-contract": "export $(grep -v '^#' .env | xargs) && npx hardhat verify --network mumbai 0x7527757d812501b403A892a1828992703F5c928F"
   },
   "eslintConfig": {
     "extends": [
@@ -76,6 +77,7 @@
   "devDependencies": {
     "@chainlink/contracts": "^0.2.2",
     "@nomiclabs/hardhat-ethers": "^2.0.3",
+    "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@openzeppelin/contracts": "^4.4.0",
     "aws-sdk": "^2.1031.0",
