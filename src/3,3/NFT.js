@@ -89,7 +89,6 @@ export const NFT = () => {
         try {
             const contract = getKlimaGardenContract();
             contract.ownerOf(tokenId).then((owner) => {
-                owner = "0x9B394B315Ada446A1fAe283b7C84Cc139B30bd16";
                 setNftOwnerAddress(owner);
                 updateSklimaBalance(owner);
             });
