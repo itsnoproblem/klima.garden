@@ -52,6 +52,11 @@ export const getSklimaContract = () => {
     return new ethers.Contract(Constants.SKLIMA_CONTRACT_ADDRESS, Constants.SKLIMA_ABI, provider);
 }
 
+export const getWSklimaContract = () => {
+    const provider = polygonMainnetProvider();
+    return new ethers.Contract(Constants.WSKLIMA_CONTRACT_ADDRESS, Constants.WSKLIMA_ABI, provider);
+}
+
 export const getKlimaStakingContract = () => {
     const provider = polygonMainnetProvider();
     return new ethers.Contract(Constants.KLIMA_STAKING_CONTRACT_ADDRESS, Constants.KLIMA_STAKING_ABI, provider);

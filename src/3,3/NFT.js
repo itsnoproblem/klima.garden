@@ -11,7 +11,7 @@ import {
     getKlimaGardenContract,
     getKlimaStakingContract,
     getSklimaContract,
-    getSvg,
+    getSvg, getWSklimaContract,
     removeAllChildNodes,
     secondsUntilBlock,
     toastError
@@ -51,9 +51,28 @@ export const NFT = () => {
 
     const updateSklimaBalance = useCallback((owner) => {
         const sklimaContract = getSklimaContract();
-        sklimaContract.balanceOf(owner).then(async (res) => {
-            console.log("got balance", res);
-            const formattedBalance = res.toNumber() / 1000000000;
+
+        sklimaContract.balanceOf(owner).then(async (sklima) => {
+            let totalSklima = sklima.toNumber();
+            const wsklimaContract = getWSklimaContract();
+            const wsklima = await wsklimaContract.balanceOf(owner);
+            console.log("got wsklima balance", wsklima);
+
+            if(wsklima > 0) {
+                try {
+                    const wsklimaAsKlima = await wsklimaContract.wKLIMATosKLIMA(wsklima);
+                    console.log("which is this much sklima", wsklimaAsKlima);
+                    if(wsklimaAsKlima.toNumber() > 0) {
+                        totalSklima += wsklimaAsKlima;
+                    }
+                }
+                catch(err) {
+                    toastError("Failed to convert wsKLIMA to sKLIMA value: " + err.toString());
+                }
+
+            }
+
+            const formattedBalance = totalSklima / 1000000000;
             const sKlimaBalance = formattedBalance.toPrecision(5).toString();
             setSklimaBalance(sKlimaBalance);
 
@@ -70,6 +89,7 @@ export const NFT = () => {
         try {
             const contract = getKlimaGardenContract();
             contract.ownerOf(tokenId).then((owner) => {
+                owner = "0x9B394B315Ada446A1fAe283b7C84Cc139B30bd16";
                 setNftOwnerAddress(owner);
                 updateSklimaBalance(owner);
             });
