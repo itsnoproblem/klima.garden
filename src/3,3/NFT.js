@@ -18,6 +18,7 @@ import {
 } from "./nftutils";
 
 import * as Constants from '../constants';
+import {ethers} from "ethers";
 
 
 export const NFT = () => {
@@ -52,8 +53,9 @@ export const NFT = () => {
     const updateSklimaBalance = useCallback(async (owner) => {
         try {
             let bal = await sklimaBalancesForOwner(owner);
-            console.log("sklimaBalabcesForOwner: ", bal);
-            setSklimaBalance(bal);
+            let formattedBalance = ethers.utils.formatUnits(bal, 9);
+            console.log("sklimaBalabcesForOwner: ", formattedBalance);
+            setSklimaBalance(formattedBalance);
         }
         catch(err) {
             toastError(toast, err)
@@ -245,7 +247,7 @@ export const NFT = () => {
 
                         <Box align={"left"}>Balance: {sklimaBalance} sKLIMA</Box>
                         <Box textAlign={["left", "right"]}>
-                            Minted with {getNftAttribute('Minted with sKLIMA')} sKLIMA
+                            Minted with {getNftAttribute('Minted with sKLIMA') / 1000000000} sKLIMA
                         </Box>
 
                         <Box textAlign="left">

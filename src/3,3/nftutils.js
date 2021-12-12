@@ -1,4 +1,4 @@
-import {ethers} from "ethers";
+import {BigNumber, ethers} from "ethers";
 import * as Constants from "../constants";
 import KlimaGardenNFT from "../utils/KlimaGardenNFT.json";
 
@@ -84,7 +84,6 @@ export const convertHMS = (value) => {
 export const sklimaBalancesForOwner = async (owner) => {
     return new Promise((resolve, reject) => {
         const sklimaContract = getSklimaContract();
-        let formattedBalance = 0;
         sklimaContract.balanceOf(owner).then(async (sklima) => {
             let totalSklima = sklima;
 
@@ -105,8 +104,8 @@ export const sklimaBalancesForOwner = async (owner) => {
                 }
             }
 
-            formattedBalance = ethers.utils.formatUnits(totalSklima, 9);
-            resolve(formattedBalance);
+
+            resolve(totalSklima);
 
         }).catch((err) => {
             reject(err);
