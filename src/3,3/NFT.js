@@ -51,9 +51,9 @@ export const NFT = () => {
 
     const updateSklimaBalance = useCallback(async (owner) => {
         try {
-            const bal = await sklimaBalancesForOwner(owner);
+            let bal = await sklimaBalancesForOwner(owner);
             console.log("sklimaBalabcesForOwner: ", bal);
-            setSklimaBalance(bal.toString());
+            setSklimaBalance(bal);
         }
         catch(err) {
             toastError(toast, err)
@@ -166,7 +166,8 @@ export const NFT = () => {
                 prog.setAttribute('opacity', 0.75);
             }
 
-            const txt = document.createTextNode(sklimaBalance);
+            const bal = new Number(sklimaBalance).toPrecision(4).toString();
+            const txt = document.createTextNode(bal);
             const element = svgObject.getElementById('sklima');
             if(element) {
                 removeAllChildNodes(element);

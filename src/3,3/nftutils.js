@@ -82,7 +82,7 @@ export const convertHMS = (value) => {
 }
 
 export const sklimaBalancesForOwner = async (owner) => {
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const sklimaContract = getSklimaContract();
         let formattedBalance = 0;
         sklimaContract.balanceOf(owner).then(async (sklima) => {
@@ -111,8 +111,7 @@ export const sklimaBalancesForOwner = async (owner) => {
         }).catch((err) => {
             reject(err);
         });
-    })
-    return promise;
+    });
 }
 
 
