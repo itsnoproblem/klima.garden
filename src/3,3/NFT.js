@@ -10,14 +10,15 @@ import {
     convertHMS,
     getKlimaGardenContract,
     getKlimaStakingContract,
-    getSklimaContract,
-    getSvg, getWSklimaContract,
+    getSvg,
     removeAllChildNodes,
     secondsUntilBlock,
+    sklimaBalancesForOwner,
     toastError
 } from "./nftutils";
 
 import * as Constants from '../constants';
+import {ethers} from "ethers";
 
 
 export const NFT = () => {
@@ -49,36 +50,17 @@ export const NFT = () => {
         }
     }, 1000);
 
-    const updateSklimaBalance = useCallback((owner) => {
-        const sklimaContract = getSklimaContract();
+    const updateSklimaBalance = useCallback(async (owner) => {
+        try {
+            let bal = await sklimaBalancesForOwner(owner);
+            let formattedBalance = ethers.utils.formatUnits(bal, 9);
+            console.log("sklimaBalabcesForOwner: ", formattedBalance);
+            setSklimaBalance(formattedBalance);
+        }
+        catch(err) {
+            toastError(toast, err)
+        }
 
-        sklimaContract.balanceOf(owner).then(async (sklima) => {
-            let totalSklima = sklima.toNumber();
-            const wsklimaContract = getWSklimaContract();
-            const wsklima = await wsklimaContract.balanceOf(owner);
-            console.log("got wsklima balance", wsklima);
-
-            if(wsklima > 0) {
-                try {
-                    const wsklimaAsKlima = await wsklimaContract.wKLIMATosKLIMA(wsklima);
-                    console.log("which is this much sklima", wsklimaAsKlima);
-                    if(wsklimaAsKlima.toNumber() > 0) {
-                        totalSklima += wsklimaAsKlima;
-                    }
-                }
-                catch(err) {
-                    toastError("Failed to convert wsKLIMA to sKLIMA value: " + err.toString());
-                }
-
-            }
-
-            const formattedBalance = totalSklima / 1000000000;
-            const sKlimaBalance = formattedBalance.toPrecision(5).toString();
-            setSklimaBalance(sKlimaBalance);
-
-        }).catch((err) => {
-            toastError(toast, err);
-        });
     }, [toast]);
 
     const fetchNFTData = useCallback(async () => {
@@ -120,23 +102,40 @@ export const NFT = () => {
         setLastUpdate(updateTime);
 
         const EPOCH_SECONDS = 7.2 * 60 * 60;
-        const rebaseInfo = await getKlimaStakingContract().epoch();
-        console.log("ebaseInfo",
-            rebaseInfo[0].toNumber(),
-            rebaseInfo[1].toNumber(),
-            rebaseInfo[2].toNumber(),
-            rebaseInfo[3].toNumber(),
-            rebaseInfo.distribute.toNumber(),
-            rebaseInfo.endBlock.toNumber(),
-            rebaseInfo.number.toNumber()
-        );
-        console.log(rebaseInfo);
+        let rebaseBlk;
+        let epochNum;
+        let rebaseBlock;
+        let seconds;
+        let pcomplete;
 
-        const epochNum = rebaseInfo[1].toNumber();
-        const rebaseBlk = rebaseInfo[2].toNumber();
-        const seconds = await secondsUntilBlock(rebaseBlk);
-        const perc = ((EPOCH_SECONDS - seconds) / EPOCH_SECONDS) * 100;
-        const pcomplete = Math.round(perc);
+        try {
+            const rebaseInfo = await getKlimaStakingContract().epoch();
+
+            console.log("rebaseInfo",
+                rebaseInfo[0].toNumber(),
+                rebaseInfo[1].toNumber(),
+                rebaseInfo[2].toNumber(),
+                rebaseInfo[3].toNumber(),
+                rebaseInfo.distribute.toNumber(),
+                rebaseInfo.endBlock.toNumber(),
+                rebaseInfo.number.toNumber()
+            );
+            console.log(rebaseInfo);
+
+            epochNum = rebaseInfo[1].toNumber();
+            rebaseBlk = rebaseInfo[2].toNumber();
+            seconds = await secondsUntilBlock(rebaseBlk);
+            const perc = ((EPOCH_SECONDS - seconds) / EPOCH_SECONDS) * 100;
+            pcomplete = Math.round(perc);
+        }
+        catch(err) {
+            console.error(err);
+            epochNum = 0;
+            rebaseBlock = 0;
+            seconds = 0;
+            pcomplete = 0;
+        }
+
         setEpochNumber(epochNum);
         setRebaseBlock(rebaseBlock);
         setSecUntilRebase(seconds);
@@ -169,7 +168,8 @@ export const NFT = () => {
                 prog.setAttribute('opacity', 0.75);
             }
 
-            const txt = document.createTextNode(sklimaBalance);
+            const bal = new Number(sklimaBalance).toPrecision(4).toString();
+            const txt = document.createTextNode(bal);
             const element = svgObject.getElementById('sklima');
             if(element) {
                 removeAllChildNodes(element);
@@ -247,7 +247,7 @@ export const NFT = () => {
 
                         <Box align={"left"}>Balance: {sklimaBalance} sKLIMA</Box>
                         <Box textAlign={["left", "right"]}>
-                            Minted with {getNftAttribute('Minted with sKLIMA')} sKLIMA
+                            Minted with {getNftAttribute('Minted with sKLIMA') / 1000000000} sKLIMA
                         </Box>
 
                         <Box textAlign="left">

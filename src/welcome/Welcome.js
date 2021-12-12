@@ -2,7 +2,6 @@ import {
     Badge,
     Box,
     Button,
-    HStack,
     Image,
     Link,
     Popover,
@@ -29,13 +28,12 @@ import ConnectButton from "./ConnectButton";
 import SwitchNetworkDialog from "./SwitchNetworkDialog";
 import * as Constants from "../constants";
 import WelcomeMenu from "./WelcomeMenu";
+import {sklimaBalancesForOwner} from "../3,3/nftutils";
 
 export const Welcome = () => {
     const [currentAccount, setCurrentAccount] = useState("");
     const [isMinting, setIsMinting] = useState(false);
     const [mintStatus, setMintStatus] = useState("");
-    const [sklimaBalance, ] = useState(0);
-    const [sklimaBalanceRaw, ] = useState(BigNumber.from(0));
     const toast = useToast();
 
     const toastError = (err) => {
@@ -65,19 +63,22 @@ export const Welcome = () => {
 
             if (ethereum) {
                 setIsMinting(true);
-                setMintStatus("awaiting user confirmation...")
-                console.log("About to mint with BALANCE", sklimaBalance);
-                console.log("BN Balance", sklimaBalanceRaw);
+                setMintStatus("checking sKLIMA balance...")
 
                 const provider = new ethers.providers.Web3Provider(ethereum);
                 const signer = provider.getSigner();
-                const connectedContract = new ethers.Contract(Constants.KLIMAGARDEN_CONTRACT_ADDRESS, KlimaGardenNFT.abi, signer);
 
+                const sklimaBalance = await sklimaBalancesForOwner(signer.getAddress());
+                const formattedBalance = ethers.utils.formatUnits(sklimaBalance, 9);
+
+                setMintStatus("awaiting user confirmation...")
+                console.log("About to mint with BALANCE", formattedBalance);
+                const connectedContract = new ethers.Contract(Constants.KLIMAGARDEN_CONTRACT_ADDRESS, KlimaGardenNFT.abi, signer);
                 window.fathom.trackGoal('OMD4FKVL', 0);
 
                 try {
                     setMintStatus("please wait...");
-                    let nftTxn = await connectedContract.makeNFT(sklimaBalanceRaw);
+                    let nftTxn = await connectedContract.makeNFT(sklimaBalance);
                     setMintStatus("confirming...");
                     window.fathom.trackGoal('SX2IES2N', 0);
                     await nftTxn.wait();
@@ -113,10 +114,6 @@ export const Welcome = () => {
             toastError(err);
         }
     }
-
-    // useEffect (() => {
-    //
-    // })
 
     return(
         <>
