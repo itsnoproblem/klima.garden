@@ -39,7 +39,7 @@ export const removeAllChildNodes = (parent) => {
 }
 
 export const polygonMainnetProvider = () => {
-    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_ALCHEMY_PROVIDER_URL, "matic");
+    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_ALCHEMY_PROVIDER_URL);
     return  provider;
 }
 
@@ -79,6 +79,40 @@ export const convertHMS = (value) => {
     hours = (hours > 0) ? (hours < 2) ? `${hours}h ` : `${hours}h ` : '';
     minutes = (minutes > 0) ? `${minutes}m ` : '';
     return hours + minutes + seconds + 's';
+}
+
+export const sklimaBalancesForOwner = async (owner) => {
+    const promise = new Promise((resolve, reject) => {
+        const sklimaContract = getSklimaContract();
+        let formattedBalance = 0;
+        sklimaContract.balanceOf(owner).then(async (sklima) => {
+            let totalSklima = sklima;
+
+            const wsklimaContract = getWSklimaContract();
+            const wsklima = await wsklimaContract.balanceOf(owner);
+            console.log("got wsklima balance", wsklima.toString());
+
+            if(wsklima.gt(0)) {
+                try {
+                    const wsklimaAsKlima = await wsklimaContract.wKLIMATosKLIMA(wsklima);
+                    console.log("which is this much sklima", wsklimaAsKlima.toString());
+                    if(wsklimaAsKlima.gt(0)) {
+                        totalSklima = totalSklima.add(wsklimaAsKlima);
+                    }
+                }
+                catch(err) {
+                    toastError("Failed to convert wsKLIMA to sKLIMA value: " + err.toString());
+                }
+            }
+
+            formattedBalance = ethers.utils.formatUnits(totalSklima, 9);
+            resolve(formattedBalance);
+
+        }).catch((err) => {
+            reject(err);
+        });
+    })
+    return promise;
 }
 
 
