@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 import {useInterval} from "usehooks-ts";
-import {Box, HStack, IconButton, Link, Progress, SimpleGrid, useMediaQuery, useToast} from "@chakra-ui/react";
+import {Box, HStack, IconButton, Link, Progress, SimpleGrid, Text, useMediaQuery, useToast} from "@chakra-ui/react";
 import {ChevronLeftIcon, ExternalLinkIcon, Icon} from "@chakra-ui/icons";
 import {FaFileImage} from "react-icons/fa";
 import {GiSailboat} from "react-icons/gi";
@@ -156,8 +156,13 @@ export const NFT = () => {
         }
 
         window.addEventListener('load', () => {
-            fetchNFTData();
-            epochUpdate();
+            fetchNFTData().then(() => {
+                epochUpdate().catch((err) => {
+                    toastError(toast, err);
+                });
+            }).catch((err) => {
+                toastError(toast, err);
+            });
         });
 
         const svgObject = getSvg();
@@ -196,10 +201,14 @@ export const NFT = () => {
         setBrowserIsVisible(visible);
     }
 
+    const mintedWithSklima = getNftAttribute('Minted with sKLIMA') / 1000000000;
+    let percChange = 100 * (sklimaBalance - mintedWithSklima) / sklimaBalance;
+    percChange = percChange.toPrecision(4);
+
     return (
         <PageVisibility onChange={handleVisibilityChange}>
             <>
-            <Box mb={3} ml={6} color="gray.600" textAlign="left" width={"100vw"}>
+            <Box mb={3} ml={6} position={"absolute"} top={2} left={0} color="gray.600" textAlign="left" width={"100vw"}>
                 <IconButton onClick={() => {window.location="/"}} icon={(<ChevronLeftIcon/>)} size={"2xl"}/>
             </Box>
             <Box w={["100vw", "inherit"]}>
@@ -245,9 +254,9 @@ export const NFT = () => {
                             epoch {epochNumber}
                         </Box>
 
-                        <Box align={"left"}>Balance: {sklimaBalance} sKLIMA</Box>
+                        <Box align={"left"}>Balance: {sklimaBalance} sKLIMA <Text d="inline" color={percChange > 0 ? "green.500" : "red.400"}>({percChange > 0 && (<>+</>)}{percChange}%)</Text></Box>
                         <Box textAlign={["left", "right"]}>
-                            Minted with {getNftAttribute('Minted with sKLIMA') / 1000000000} sKLIMA
+                            Minted with {mintedWithSklima} sKLIMA
                         </Box>
 
                         <Box textAlign="left">
